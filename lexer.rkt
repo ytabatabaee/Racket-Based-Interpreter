@@ -132,7 +132,7 @@
 
 		[(:: #\" (:* any-char whitespace) #\")
 		;=>
-                 (cons (token-STR (string->symbol lexeme))
+                 (cons (token-STR lexeme)
           (my-lexer input-port))]
 
 		[whitespace
