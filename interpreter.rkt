@@ -33,5 +33,19 @@
         (interpret-whilecom unitcom (interpret-cmd (caddr unitcom) env))
         env)))
 
+; variable = exp
+; parser output: (assign variable (exp))
+
+
+
+; return exp
+; parser output: (return (exp))
+
+
+
+
+
+
+
 
     
