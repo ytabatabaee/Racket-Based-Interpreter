@@ -7,10 +7,21 @@
 
 (define my-lexer
 	(lexer
+		[","
+		;=>
+		(cons (token-comma)
+          (my-lexer input-port))]
+
+		[";"
+		;=>
+		(cons (token-semicolon)
+          (my-lexer input-port))]
+                
 		["+"
 		;=>
 		(cons (token-plus)
           (my-lexer input-port))]
+                
 		["-"
 		;=>
 		(cons (token-minus)
@@ -146,12 +157,14 @@
 
 
 (define-tokens a (NUM VAR STR))
-(define-empty-tokens b (EOF plus minus mult div greater less equal notequal assign Lpar Rpar Lbr Rbr TRUE FALSE NULL if then else endif while do end return)) ;?? NULL??
+(define-empty-tokens b (EOF plus minus mult div greater less equal notequal assign Lpar Rpar Lbr Rbr TRUE FALSE NULL if then else endif while do end return comma semicolon)) ;?? NULL??
 
-
-(my-lexer (open-input-string "1+2+ 3 +   4
-
+(define test1  "1+2+ 3 +   4
 if a == 2.011 * 6 then
     b = \"Salam, chetori?! 1234 \"
-endif"))
+endif")
+
+(define test2 "while 10 * [34 null] then do return return true end")
+
+(my-lexer (open-input-string test2))
 
