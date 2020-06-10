@@ -5,9 +5,15 @@
 ; add any other local function we might need
 
 (provide update-env)
-
+(provide apply-env)
 
 (define update-env
   (lambda (var val env)
+    ; todo complete this
+    env))
+
+
+(define apply-env
+  (lambda (var env)
     ; todo complete this
     env))

@@ -69,7 +69,7 @@
 ; returns #t or #f
 (define compare
   (lambda (op)
-    (lambda (exp1 exp2)
+    (lambda (val1 val2)
       #t)))
 
 
@@ -77,7 +77,7 @@
 ; handle == according to doc (as much as i've seen, != is just the opposite of ==)
 ; returns #t or #f
 (define is-equal
-    (lambda (exp1 exp2)
+    (lambda (val1 val2)
       #t))
 
 
@@ -87,7 +87,7 @@
 ; we may need to break this function into pieces, idk
 (define binary-operation
   (lambda (op)
-    (lambda (exp1 exp2)
+    (lambda (val1 val2)
     #t)))
 
 
@@ -96,21 +96,25 @@
    (lambda (cexp)
     #t))
 
-
+; todo complete this
+; note: this function should return the VALUES for each expression, e.g. a real racket list or number or string
 ; parser output: (- cexp), (lparen exp rparen), (posnum), (null), (var), (true), (false), (string), (lbracket listValues rbracket), (listValues), (listmem)
 (define value-of-cexp
   (lambda (exp env)
     (cond
       ((eq? (car exp) '-) (negation (value-of-cexp (cadr exp) env)))
       ((eq? (car exp) 'lparen) (if (eq? (caddr exp) 'rparen)
-                                   (value-of-cexp (cadr exp) env) (value-of-bexp (caddr exp) env)
+                                   (value-of-exp (cadr exp) env)
                                    (error "Error: Parenteses not closed!")))
       ((number? (car exp)) (car exp))
       ((eq? (car exp) 'null) '())
       ((eq? (car exp) 'true) #t)
       ((eq? (car exp) 'false) #f)
       ((string? (car exp)) (car exp))
-      ; check list
+      ; not sure how to handle this, should we have a function for value of listvals?
+      ((eq? (car exp) 'lbacket) (if (eq? (caddr exp) 'rbracket)
+                                   (value-of-cexp (cadr exp) env)
+                                   (error "Error: Bracket not closed!")))
       ; check listValues
       ; check listmem 
       )))
@@ -145,7 +149,10 @@
       (else (value-of-aexp (car exp) env)))))
 
 
-
+; todo complete this
+(define id?
+  (lambda (sym)
+    #t))
 
 
 
