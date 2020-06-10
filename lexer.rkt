@@ -9,23 +9,19 @@
 	(lexer
 		[","
 		;=>
-		(cons (token-comma)
-          (my-lexer input-port))]
+		(token-comma)]
 
 		[";"
 		;=>
-		(cons (token-semicolon)
-          (my-lexer input-port))]
+		(token-semicolon)]
                 
 		["+"
 		;=>
-		(cons (token-plus)
-          (my-lexer input-port))]
+		(token-plus)]
                 
 		["-"
 		;=>
-		(cons (token-minus)
-          (my-lexer input-port))]
+		(token-minus)]
 
 		["*"
 		;=>
@@ -33,126 +29,107 @@
           (my-lexer input-port))]
 		["/"
 		;=>
-		(cons (token-div)
-          (my-lexer input-port))]
+		(token-div)]
 
 		[">"
 		;=>
-		(cons (token-greater)
-          (my-lexer input-port))]
+		(token-greater)]
+
 		["<"
 		;=>
-		(cons (token-less)
-          (my-lexer input-port))]
+		(token-less)]
 
 		["=="
 		;=>
-		(cons (token-equal)
-          (my-lexer input-port))]
+		(token-equal)]
+
 		["!="
 		;=>
-		(cons (token-notequal)
-          (my-lexer input-port))]
-
+		(token-notequal)]
 
 		["="
 		;=>
-		(cons (token-assign)
-          (my-lexer input-port))]
+		(token-assign)]
+
 		["("
 		;=>
-		(cons (token-Lpar)
-          (my-lexer input-port))]
+		(token-Lpar)]
 
 		[")"
 		;=>
-		(cons (token-Rpar)
-          (my-lexer input-port))]
+		(token-Rpar)]
 
 		["["
 		;=>
-		(cons (token-Lbr)
-          (my-lexer input-port))]
+		(token-Lbr)]
+
 		["]"
 		;=>
-		(cons (token-Rbr)
-          (my-lexer input-port))]
+		(token-Rbr)]
 
 		["true"
 		;=>
-		(cons (token-TRUE)
-          (my-lexer input-port))]
+		(token-TRUE)]
+
 		["false"
 		;=>
-		(cons (token-FALSE)
-          (my-lexer input-port))]
+		(token-FALSE)]
 
 		["null"
 		;=>
-		(cons (token-NULL)
-          (my-lexer input-port))]
+		(token-NULL)]
 
 		["if"
 		;=>
-		(cons (token-if)
-          (my-lexer input-port))]
+		(token-if)]
+
 		["then"
 		;=>
-		(cons (token-then)
-          (my-lexer input-port))]
+		(token-then)]
 
 		["else"
 		;=>
-		(cons (token-else)
-          (my-lexer input-port))]
+		(token-else)]
+
 		["endif"
 		;=>
-		(cons (token-endif)
-          (my-lexer input-port))]
-
+		(token-endif)]
 
 		["while"
 		;=>
-		(cons (token-while)
-          (my-lexer input-port))]
+		(token-while)]
+
 		["do"
 		;=>
-		(cons (token-do)
-          (my-lexer input-port))]
+		(token-do)]
 
 		["end"
 		;=>
-		(cons (token-end)
-          (my-lexer input-port))]
+		(token-end)]
 
 		["return"
 		;=>
-		(cons (token-return)
-          (my-lexer input-port))]
-
+		(token-return)]
 
 		[(:or (:+ (char-range #\0 #\9)) (:: (:+ (char-range #\0 #\9)) #\. (:+ (char-range #\0 #\9))))
 		;=>
-		(cons (token-NUM (string->number lexeme))
-          (my-lexer input-port))]
+		(token-NUM (string->number lexeme))]
 
 		[(:+ (:or (char-range #\a #\z) (char-range #\A #\Z)))
-    ; =>
-    (cons (token-VAR (string->symbol lexeme))
-          (my-lexer input-port))]
+                 ; =>
+                 (token-VAR (string->symbol lexeme))]
 
 		[(:: #\" (:* any-char whitespace) #\")
 		;=>
-                 (cons (token-STR lexeme)
-          (my-lexer input-port))]
+                 (token-STR lexeme)]
 
 		[whitespace
-			;=>
-			(my-lexer input-port)]
+		;=>
+		(my-lexer input-port)]
 
 		[(eof)
-			;=>
-			(token-EOF)]
+		;=>
+		(token-EOF)]
 		))
 
 
