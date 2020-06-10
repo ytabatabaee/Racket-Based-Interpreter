@@ -97,13 +97,23 @@
     #t))
 
 
-; parser output: (op cexp bexp) or (cexp)
+; parser output: (- cexp), (lparen exp rparen), (posnum), (null), (var), (true), (false), (string), (lbracket listValues rbracket), (listValues), (listmem)
 (define value-of-cexp
   (lambda (exp env)
     (cond
-      ((eq? (car exp) '-) ((binary-operation *) (value-of-cexp (cadr exp) env) (value-of-bexp (caddr exp) env)))
-      ((eq? (car exp) '() ((binary-operation /) (value-of-cexp (cadr exp) env) (value-of-bexp (caddr exp) env)))
-      (else (value-of-cexp (car exp) env)))))
+      ((eq? (car exp) '-) (negation (value-of-cexp (cadr exp) env)))
+      ((eq? (car exp) 'lparen) (if (eq? (caddr exp) 'rparen)
+                                   (value-of-cexp (cadr exp) env) (value-of-bexp (caddr exp) env)
+                                   (error "Error: Parenteses not closed!")))
+      ((number? (car exp)) (car exp))
+      ((eq? (car exp) 'null) '())
+      ((eq? (car exp) 'true) #t)
+      ((eq? (car exp) 'false) #f)
+      ((string? (car exp)) (car exp))
+      ; check list
+      ; check listValues
+      ; check listmem 
+      )))
 
   
 ; parser output: (op cexp bexp) or (cexp)
