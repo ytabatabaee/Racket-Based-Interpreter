@@ -23,10 +23,10 @@
 		;=>
 		(token-minus)]
 
-		["*"
-		;=>
-		(cons (token-mult)
-          (my-lexer input-port))]
+                ["*"
+                ;=>
+                (token-mult)]
+
 		["/"
 		;=>
 		(token-div)]
@@ -143,5 +143,8 @@ endif")
 
 (define test2 "while 10 * [34 null] then do return return true end")
 
-(my-lexer (open-input-string test2))
+;(my-lexer (open-input-string test2))
 
+(define lex-this (lambda (lexer input) (lambda () (lexer input))))
+(define lex (lex-this my-lexer (open-input-string test2)))
+(lex)
