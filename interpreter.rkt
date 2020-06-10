@@ -1,80 +1,19 @@
 #lang racket
 
-; todo: add the rest
-(define-datatype cexp cexp?
-  (var
-   (id symbol?))
-  (pos-number
-   (num number?))
-  (neg-exp
-   (body-exp cexp?))
-  (paren-exp
-   (body-exp exp?)))
-
-
-(define-datatype bexp bexp?
-  (cexp-exp
-    (exp1 cexp?))
-  (mul-exp
-    (exp1 cexp?)
-    (exp2 bexp?))
-  (div-exp
-    (exp1 cexp?)
-    (exp2 bexp?)))
-
-
-(define-datatype aexp aexp?
-  (bexp-exp
-    (exp1 bexp?))
-  (sum-exp
-    (exp1 bexp?)
-    (exp2 aexp?))
-  (sub-exp
-    (exp1 bexp?)
-    (exp2 aexp?)))
-
-
-(define-datatype exp exp?
-  (aexp-exp
-    (exp1 aexp?))
-  (gt-exp
-    (exp1 aexp?)
-    (exp2 aexp?))
-  (lt-exp
-    (exp1 aexp?)
-    (exp2 aexp?))
-  (eq-exp
-    (exp1 aexp?)
-    (exp2 aexp?))
-  (neq-exp
-    (exp1 aexp?)
-    (exp2 aexp?)))
-
-(define-datatype exp exp?
-  (while-exp
-    (exp1 aexp?))
-  (if-exp
-    (exp1 aexp?)
-    (exp2 aexp?))
-  (assign-exp
-    (exp1 aexp?)
-    (exp2 aexp?))
-  (ret-exp
-    (exp1 aexp?)
-    (exp2 aexp?))
-  (neq-exp
-    (exp1 aexp?)
-    (exp2 aexp?)))
-
+(require "environment.rkt")
 
   
-
+; command → unitcom | command; unitcom
+; parser output: ((uc) (uc) ... (uc))
 (define interpret-cmd
   (lambda (cmd env)
-    env
-    ))
+    (if (null? cmd)
+        env
+        (interpret-cmd (cdr cmd) (interpret-unitcom (car cmd) env)))))
 
-; whilecom | ifcome | assign | return
+
+; unitcom → whilecom | ifcom | assign | return
+; whilecom | ifcom | assign | return
 (define interpret-unitcom
   (lambda (unitcom env)
     (cond
@@ -101,14 +40,40 @@
         (interpret-whilecom unitcom (interpret-cmd (caddr unitcom) env))
         env)))
 
+
 ; variable = exp
 ; parser output: (assign variable (exp))
-
+(define interpret-assign
+  (lambda (unitcom env)
+    (let
+        ((var (cadr unitcom))
+         (val (interpret-exp-value (caddr unitcom) env)))
+      (update-env var val env))))
+      
+ 
 
 
 ; return exp
 ; parser output: (return (exp))
+(define interpret-return
+  (lambda (unitcom env)
+    env
+    ; todo complete this
+    ))
 
+
+(define interpret-exp-value
+  (lambda (exp env)
+    env
+    ; todo complete this
+    ))
+
+
+(define interpret-aexp
+  (lambda (exp env)
+    env
+    ; todo complete this
+    ))
 
 
 (define interpret-exp
@@ -116,8 +81,8 @@
     (cond
       ((eq? (car exp) '>) (interpret-aexp (cadr exp) env))
       ((eq? (car exp) '<) (interpret-aexp (cadr exp) env))
-      ((eq? (car exp) '==) (interpret-aexp unitcom env))
-      ((eq? (car exp) '!=) (interpret-aexp unitcom env))
+      ((eq? (car exp) '==) (interpret-aexp (cadr exp) env))
+      ((eq? (car exp) '!=) (interpret-aexp (cadr exp) env)))))
 
 
 
