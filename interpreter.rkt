@@ -1,7 +1,7 @@
 #lang racket
 
 (require "environment.rkt")
-  
+
 ; command → unitcom | command; unitcom
 ; parser output: ((uc) (uc) ... (uc))
 ; returns updated env
@@ -53,8 +53,8 @@
         ((var (cadr unitcom))
          (val (value-of-exp (caddr unitcom) env)))
       (update-env var val env))))
-      
- 
+
+
 ; return exp
 ; parser output: (return (exp))
 ; returns value of return exp
@@ -63,22 +63,32 @@
     (value-of-exp exp env)))
 
 
-
-; todo complete this
+; todo add list compare
 ; handle > or < according to doc
 ; returns #t or #f
 (define compare
-  (lambda (op)
-    (lambda (val1 val2)
-      #t)))
+	(lambda (op)
+		(lambda (val1 val2)
+		(cond
+			[(and (string? val1) (string? val2))
+				(if (eqv? op <)
+					(string<? val1 val2)
+					(if (eqv? op >)
+						(string>? val1 val2)))]
+
+			[(and (number? val1) (number? val2))
+				(op val1 val2)]
+		))))
 
 
-; todo complete this
+
+; todo add list is-equal
 ; handle == according to doc (as much as i've seen, != is just the opposite of ==)
 ; returns #t or #f
 (define is-equal
     (lambda (val1 val2)
-      #t))
+			(equal? val1 val2)
+    ))
 
 
 ; todo complete this
@@ -88,13 +98,28 @@
 (define binary-operation
   (lambda (op)
     (lambda (val1 val2)
-    #t)))
+			(cond
+				[(and (number? val1) (number? val2))
+					(op val1 val2)]
+
+				[(and (boolean? val1) (boolean? val2))
+					(if (eqv? op +) (or val1 val2)
+						(if (eqv? op *) (and val1 val2)) (error "Error: Operation not allowed!"))]
+
+				[(and (string? val1) (string? val2))
+					(if (eqv? op +) (string-append val1 val2) (error "Error: Operation not allowed!"))]
+
+			))))
 
 
-; todo complete this
+; todo add list negation
 (define negation
    (lambda (cexp)
-    #t))
+	 	(cond
+			[(number? cexp) (- cexp)]
+			[(boolean? cexp) (not cexp)]
+			)
+    ))
 
 ; todo complete this
 ; note: this function should return the VALUES for each expression, e.g. a real racket list or number or string
@@ -116,10 +141,10 @@
                                    (value-of-cexp (cadr exp) env)
                                    (error "Error: Bracket not closed!")))
       ; check listValues
-      ; check listmem 
+      ; check listmem
       )))
 
-  
+
 ; parser output: (op cexp bexp) or (cexp)
 (define value-of-bexp
   (lambda (exp env)
@@ -153,12 +178,3 @@
 (define id?
   (lambda (sym)
     #t))
-
-
-
-
-
-
-
-
-    
