@@ -81,14 +81,16 @@
                    (op val1 val2)]
                         
                   [(list? val1)
-                   (if (compare op (car val1) val2)
-                       (compare op (cdr val1) val2)
-                       #f)]
+                   (if (null? val1)
+                       '()
+                       (cons ((compare op) (car val1) val2) ((compare op) (cdr val1) val2))
+                       )]
                         
                   [(list? val2)
-                   (if (compare op val1 (car val2))
-                       (compare op val1 (cdr val2))
-                       #f)]
+                   (if (null? val2)
+                       '()
+                       (cons ((compare op) val1 (car val2)) ((compare op) val1 (cdr val2)))
+                       )]
 		))))
 
 
@@ -99,18 +101,23 @@
   (lambda (val1 val2)
     (cond
       [(and (list? val1) (list? val2))
-       (if (is-equal (value-of-exp (car val1)) (value-of-exp (car val2)))
-           (is-equal (cdr val1) (cdr val2))
-           (#f))]
+       (if (xor (null? val1) (null? val2))
+           (error "ERROR: For comparison, lists must be of same size.")
+           (if (null? val1)
+               #t
+               (if (is-equal (car val1) (car val2))
+                   (is-equal (cdr val1) (cdr val2))
+                   #f)
+               ))]
     
       [(list? val1)
-       (if (eqv? (value-of-exp(car val1)) val2)
-           (compare (cdr val1) val2)
+       (if (eqv? (car val1) val2)
+           ((compare =) (cdr val1) val2)
            #f)]
     
       [(list? val2)
-       (if (eqv? val1 (value-of-exp (car val2)))
-           (compare val1 (cdr val2))
+       (if (eqv? val1  (car val2))
+           ((compare =) val1 (cdr val2))
            #f)]
 
       [else (equal? val1 val2)]
@@ -136,10 +143,10 @@
         [(and (string? val1) (string? val2))
          (if (eqv? op +) (string-append val1 val2) (error "Error: Operation not allowed!"))]
 
-        [(and (list? val1) (list? val2) (op +))
+        [(and (list? val1) (list? val2) (eq? op +))
          (append val1 val2)]
 
-        [(and (list? val1) (string? val2) (op +))
+        [(and (list? val1) (string? val2) (eq? op +))
          (if (null? val1)
              '()
              (cons (string-append val2 (car val1))
@@ -163,8 +170,8 @@
         [(and (list? val2) (boolean? val1))
          (if (null? val2)
              '()
-             (cons (binary-operation op (car val2) val1)
-                   (binary-operation op (cdr val2) val1))
+             (cons ((binary-operation op) (car val2) val1)
+                   ((binary-operation op) (cdr val2) val1))
              )]
 
         [(and (list? val1) (number? val2))
@@ -172,7 +179,7 @@
              '()
              (if (number? (car val1))
                  (cons (op (car val1) val2)
-                       (binary-operation op (cdr val1) val2))
+                       ((binary-operation op) (cdr val1) val2))
                  (error "ERROR: All list members must be of type number."))
              )]
 
@@ -180,8 +187,8 @@
          (if (null? val2)
              '()
              (if (number? (car val2))
-                 (cons (op val1 (car val2)
-                       (binary-operation op val1 (cdr val2))))
+                 (cons (op val1 (car val2))
+                       ((binary-operation op) val1 (cdr val2)))
                  (error "ERROR: All list members must be of type number."))
              )]
         ))))
@@ -212,9 +219,7 @@
   (lambda (exp env)
     (cond
       ((eq? (car exp) 'neg) (negation (value-of-cexp (cadr exp) env)))
-      ((eq? (car exp) 'par) (if (eq? (caddr exp) 'rparen)
-                                   (value-of-exp (cadr exp) env)
-                                   (error "Error: Parenteses not closed!")))
+      ((eq? (car exp) 'par) (value-of-exp (cadr exp) env))
       ((eq? (car exp) 'num) (cadr exp))
       ((eq? (car exp) 'null) '())
       ((eq? (car exp) 'true) #t)
@@ -227,9 +232,9 @@
   
       ((eq? (car exp) 'list) (if (eq? (caadr exp) 'empty)
                                  '()
-                                 (display (value-of-exp (list 'list (cdadr exp))))
-                                 ;(cons (value-of-exp (caadr exp))
-                                  ;     (value-of-exp (list 'list (cdadr exp))))
+                                 ;(display (value-of-exp (list 'list (cdadr exp))))
+                                 (cons (value-of-exp (caadr exp) env)
+                                       (value-of-exp (list 'list (cdadr exp)) env))
                                  ))
       ; check listmem
       )))
@@ -268,8 +273,13 @@
 (define id?
   (lambda (sym)
     #t))
-
+/
 
 ;(interpret-cmd '((return (false)) (return (true))) '())
 ;(interpret-cmd '((while (mult (num 10) (list ((num 34) NULL empty))) ((return (true))))) '())
 ;(interpret-cmd '((if (num 10) ((return (true))) ((return (false))))) '())
+;(interpret-cmd '((return (list ((num 19) null false (list ((num 10) empty)) empty)))) '())
+;(interpret-cmd '((if (> (num 10) (num 4)) ((return (list ((* (num 2) (num 3)) (- (num 7) (num 9)) empty)))) ((return (/ (num 8) (num 10)))))) '())
+
+(define (i a) (interpret-cmd a '()))
+(i '((return (* (+ (num 7) (num 1)) (num 1)))))
