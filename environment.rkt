@@ -9,11 +9,18 @@
 
 (define update-env
   (lambda (var val env)
-    ; todo complete this
-    env))
+    (if (null? env)
+        (list (list var val))
+        (if (eqv? (caar env) var)
+            (cons (list var val) (cdr env))
+            (cons (car env) (update-env var val (cdr env)))))))
 
 
 (define apply-env
   (lambda (var env)
-    ; todo complete this
-    env))
+    (if (null? env)
+        (error "Error: Variable is not defined!")
+        (if (eqv? (caar env) var)
+            (cadr (car env))
+            (apply-env var (cdr env))))))
+
