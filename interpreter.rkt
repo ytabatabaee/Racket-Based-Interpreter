@@ -111,14 +111,18 @@
                ))]
     
       [(list? val1)
-       (if (eqv? (car val1) val2)
-           ((compare =) (cdr val1) val2)
-           #f)]
+       (if (null? val1)
+           #t
+           (if (eqv? (car val1) val2)
+               (is-equal (cdr val1) val2)
+               #f))]
     
       [(list? val2)
-       (if (eqv? val1  (car val2))
-           ((compare =) val1 (cdr val2))
-           #f)]
+       (if (null? val2)
+           #t
+           (if (eqv? val1  (car val2))
+               (is-equal val1 (cdr val2))
+               #f))]
 
       [else (equal? val1 val2)]
       ))
@@ -153,7 +157,7 @@
                    (binary-operation op (cdr val1) val2))
              )]
 
-        [(and (string? val1) (list? val2) (op +))
+        [(and (string? val1) (list? val2) (eq? op +))
          (if (null? val2)
              '()
              (cons (string-append val1 (car val2))
