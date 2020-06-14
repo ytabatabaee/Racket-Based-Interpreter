@@ -143,8 +143,8 @@
    (tokens a b)
    (grammar
 
-    (command ((unitcom) (values $1))
-             ((command semicolon unitcom) (values $1 $3))) 
+    (command ((unitcom) (list $1))
+             ((command semicolon unitcom) (append $1 (list $3)))) 
     
     (unitcom ((whilecom) (values $1))
              ((ifcom) (values $1))
@@ -178,17 +178,17 @@
           ((NUM) (list 'num $1))
           ((NULL) (values 'NULL))
           ((VAR) (list 'var $1))
-          ((TRUE) (list 'bool 'true))
-          ((FALSE) (list 'bool 'false))
+          ((TRUE) (list 'true))
+          ((FALSE) (list 'false))
           ((STR) (list 'string $1))
           ((list) (list 'list $1))
           ((VAR listmem) (list 'list_var $2)))
     
-    (list ((Lbr listValues Rbr) (list 'br (list 'list_val $2)))
-          ((Lbr Rbr) (list 'br)))
+    (list ((Lbr listValues Rbr) (values $2))
+          ((Lbr Rbr) (list 'empty)))
     
-    (listValues ((exp) (values $1))
-                ((exp comma listValues) (values $1))) ;Needs to be completed
+    (listValues ((exp) (list $1 'empty))
+                ((exp comma listValues) (cons $1 $3))) ;Needs to be completed
      
     (listmem ((Lbr exp Rbr) (list 'list_idx $2))
              ((Lbr exp Rbr listmem) (values $2)) ;Needs to be completed
@@ -197,8 +197,12 @@
     ))
    )
 
-(define test1 "while 10 * [34, null] do return true end")
+(define test1 "while 10 do return true end")
+(define test2 "while 10 * [1, 3 , 2 , true, []] do return true end")
+(define test3 "return false; return true")
+(define test4 "if 10 then return true else return false endif")
+(define test5 "return [19, 29]")
 
 (define lex-this (lambda (lexer input) (lambda () (lexer input))))
-(define lex (lex-this my-lexer (open-input-string test1)))
+(define lex (lex-this my-lexer (open-input-string test5)))
 (let ((parser-res (gram_parser lex))) parser-res)
