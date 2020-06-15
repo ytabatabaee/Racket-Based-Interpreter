@@ -154,21 +154,21 @@
          (if (null? val1)
              '()
              (cons (string-append val2 (car val1))
-                   (binary-operation op (cdr val1) val2))
+                   ((binary-operation op) (cdr val1) val2))
              )]
 
         [(and (string? val1) (list? val2) (eq? op +))
          (if (null? val2)
              '()
              (cons (string-append val1 (car val2))
-                   (binary-operation op val1 (cdr val2)))
+                   ((binary-operation op) val1 (cdr val2)))
              )]
 
         [(and (list? val1) (boolean? val2))
          (if (null? val1)
              '()
-             (cons (binary-operation op (car val1) val2)
-                   (binary-operation op (cdr val1) val2))
+             (cons ((binary-operation op) (car val1) val2)
+                   ((binary-operation op) (cdr val1) val2))
              )]
 
         [(and (list? val2) (boolean? val1))
@@ -216,24 +216,31 @@
        )
     ))
 
-; todo complete this
+; note: this function takes an array and alist of indexes and returns corresponding element.
+(define array-value
+  (lambda (var idx_list env)
+    (let ([var (list-ref var (value-of-exp (car idx_list) env))])
+      (if (eqv? (length idx_list) 1)
+          var
+          (array-value var (cdr idx_list) env)))
+    ))
+       
+       
+
 ; note: this function should return the VALUES for each expression, e.g. a real racket list or number or string
 ; parser output: (- cexp), (lparen exp rparen), (posnum), (null), (var), (true), (false), (string), (lbracket listValues rbracket), (listValues), (listmem)
 (define value-of-cexp
   (lambda (exp env)
     (cond
+      ((eq? (car exp) 'var) (apply-env (cadr exp) env))
+      ((eq? (car exp) 'array_var) (array-value (apply-env (cadr exp) env) (caddr exp) env))
       ((eq? (car exp) 'neg) (negation (value-of-cexp (cadr exp) env)))
       ((eq? (car exp) 'par) (value-of-exp (cadr exp) env))
       ((eq? (car exp) 'num) (cadr exp))
       ((eq? (car exp) 'null) '())
       ((eq? (car exp) 'true) #t)
       ((eq? (car exp) 'false) #f)
-      ((eq? (car exp) 'string) (car exp))
-      ; not sure how to handle this, should we have a function for value of listvals?
-      ((eq? (car exp) 'lbacket) (if (eq? (caddr exp) 'rbracket)
-                                   (value-of-cexp (cadr exp) env)
-                                   (error "Error: Bracket not closed!")))
-  
+      ((eq? (car exp) 'string) (cadr exp))  
       ((eq? (car exp) 'list) (if (eq? (caadr exp) 'empty)
                                  '()
                                  ;(display (value-of-exp (list 'list (cdadr exp))))
@@ -277,7 +284,7 @@
 (define id?
   (lambda (sym)
     #t))
-/
+
 
 ;(interpret-cmd '((return (false)) (return (true))) '())
 ;(interpret-cmd '((while (mult (num 10) (list ((num 34) NULL empty))) ((return (true))))) '())
@@ -286,4 +293,3 @@
 ;(interpret-cmd '((if (> (num 10) (num 4)) ((return (list ((* (num 2) (num 3)) (- (num 7) (num 9)) empty)))) ((return (/ (num 8) (num 10)))))) '())
 
 (define (i a) (interpret-cmd a '()))
-(i '((return (* (+ (num 7) (num 1)) (num 1)))))

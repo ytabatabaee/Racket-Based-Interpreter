@@ -182,16 +182,16 @@
           ((FALSE) (list 'false))
           ((STR) (list 'string $1))
           ((list) (list 'list $1))
-          ((VAR listmem) (list 'list_var $2)))
+          ((VAR listmem) (list 'array_var $1 $2)))
     
     (list ((Lbr listValues Rbr) (values $2))
           ((Lbr Rbr) (list 'empty)))
     
     (listValues ((exp) (list $1 'empty))
-                ((exp comma listValues) (cons $1 $3))) ;Needs to be completed
+                ((exp comma listValues) (cons $1 $3))) 
      
-    (listmem ((Lbr exp Rbr) (list 'list_idx $2))
-             ((Lbr exp Rbr listmem) (values $2)) ;Needs to be completed
+    (listmem ((Lbr exp Rbr) (list $2))
+             ((Lbr exp Rbr listmem) (append (list $2) $4))
              )
 
     ))
@@ -204,7 +204,10 @@
 (define test5 "return [19, 29]")
 (define test6 "return null")
 (define test7 "if 10 > 4 then return [2*3, 7-9] else return 8/10 endif")
-(define test8 "return  [2, 2, 2] == 2")
+(define test8 "x= [[1, 2], [2, 3]]; return x[1][1]")
+(define test9 "x = 5; y= [1, 2, 3, [4, 5]]; return false + [x>10, x<20, x!=y[3][1]]")
+(define test10 "return [\"b\", 1] + \"a\"")
+
 (define lex-this (lambda (lexer input) (lambda () (lexer input))))
-(define lex (lex-this my-lexer (open-input-string test8)))
+(define lex (lex-this my-lexer (open-input-string test10)))
 (let ((parser-res (gram_parser lex))) parser-res)
