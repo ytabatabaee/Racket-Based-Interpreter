@@ -2,7 +2,6 @@
 
 (provide my-lexer)
 
-
 (require parser-tools/lex
          (prefix-in : parser-tools/lex-sre)
          parser-tools/yacc)
@@ -16,11 +15,11 @@
 		[";"
 		;=>
 		(token-semicolon)]
-                
+
 		["+"
 		;=>
 		(token-plus)]
-                
+
 		["-"
 		;=>
 		(token-minus)]
@@ -121,7 +120,7 @@
                  ; =>
                  (token-VAR (string->symbol lexeme))]
 
-		[(:: #\" (:* any-char whitespace) #\")
+		[(:: "\"" (:* (:- any-char "\"")) "\"" )
 		;=>
                  (token-STR lexeme)]
 
@@ -144,9 +143,19 @@ if a == 2.011 * 6 then
 endif")
 
 (define test2 "while 10 * [34 null] then do return return true end")
+(define test3 "return [\"blue sky\", 1] + \"a\"")
 
 ;(my-lexer (open-input-string test2))
 
 (define lex-this (lambda (lexer input) (lambda () (lexer input))))
-(define lex (lex-this my-lexer (open-input-string test2)))
+(define lex (lex-this my-lexer (open-input-string test3)))
+(lex)
+(lex)
+(lex)
+(lex)
+(lex)
+(lex)
+(lex)
+(lex)
+(lex)
 (lex)
