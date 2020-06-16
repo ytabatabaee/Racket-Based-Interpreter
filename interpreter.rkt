@@ -81,17 +81,16 @@
                   [(and (number? val1) (number? val2))
                    (op val1 val2)]
                         
-                  [(list? val1)
+                  [(and (list? val1) (or (number? val2) (string? val2)))
                    (if (null? val1)
                        '()
-                       (cons ((compare op) (car val1) val2) ((compare op) (cdr val1) val2))
+                       (if (or (and (number? val2) (number? (car val1))) (and (string? val2) (string? (car val1))))
+                           (cons ((compare op) (car val1) val2) ((compare op) (cdr val1) val2))
+                           (error "Error: Comparison not allowed due to type inconsistency!"))
                        )]
+
+                  [else (error "Error: Comparison not allowed!")]
                         
-                  [(list? val2)
-                   (if (null? val2)
-                       '()
-                       (cons ((compare op) val1 (car val2)) ((compare op) val1 (cdr val2)))
-                       )]
 		))))
 
 
@@ -111,23 +110,21 @@
                    #f)
                ))]
     
-      [(list? val1)
+      [(and (list? val1) (or (string? val2) (number? val2) (boolean? val2) (null? val2)))
        (if (null? val1)
            #t
-           (if (eqv? (car val1) val2)
-               (is-equal (cdr val1) val2)
-               #f))]
-    
-      [(list? val2)
-       (if (null? val2)
-           #t
-           (if (eqv? val1  (car val2))
-               (is-equal val1 (cdr val2))
-               #f))]
+           (cond
+             [(and (string? val2) (not (string? (car val1)))) #f]
+             [(and (number? val2) (not (number? (car val1)))) #f]
+             [(and (boolean? val2) (not (boolean? (car val1)))) #f]
+             [(and (null? val2) (not (null? (car val1)))) #f]
+             [else (is-equal (cdr val1) val2)])
+           )]
 
-      [else (equal? val1 val2)]
+      [(or (number? val1) (string? val1) (null? val1) (boolean? val1)) (equal? val1 val2)]
+      
+      [else #f])
       ))
-  )
   
 
 
@@ -154,29 +151,37 @@
         [(and (list? val1) (string? val2) (eq? op +))
          (if (null? val1)
              '()
-             (cons (string-append val2 (car val1))
-                   ((binary-operation op) (cdr val1) val2))
+             (if (string? (car val1))
+                 (cons (string-append val2 (car val1))
+                       ((binary-operation op) (cdr val1) val2))
+                 (error "All list members must be of type string."))
              )]
 
         [(and (string? val1) (list? val2) (eq? op +))
          (if (null? val2)
              '()
-             (cons (string-append val1 (car val2))
-                   ((binary-operation op) val1 (cdr val2)))
+             (if (string? (car val2))
+                 (cons (string-append val1 (car val2))
+                       ((binary-operation op) val1 (cdr val2)))
+                 (error "ERROR: All list members must be of type string."))
              )]
 
         [(and (list? val1) (boolean? val2))
          (if (null? val1)
              '()
-             (cons ((binary-operation op) (car val1) val2)
-                   ((binary-operation op) (cdr val1) val2))
+             (if (boolean? (car val1))
+                 (cons ((binary-operation op) (car val1) val2)
+                       ((binary-operation op) (cdr val1) val2))
+                 (error "ERROR: All list members must be of type boolean."))
              )]
 
         [(and (list? val2) (boolean? val1))
          (if (null? val2)
              '()
-             (cons ((binary-operation op) (car val2) val1)
-                   ((binary-operation op) (cdr val2) val1))
+             (if (boolean? (car val2))
+                 (cons ((binary-operation op) (car val2) val1)
+                       ((binary-operation op) (cdr val2) val1))
+                 (error "ERROR: All list members must be of type boolean."))
              )]
 
         [(and (list? val1) (number? val2))
@@ -196,6 +201,8 @@
                        ((binary-operation op) val1 (cdr val2)))
                  (error "ERROR: All list members must be of type number."))
              )]
+
+        [else (error "Error: Operation not allowed!")] 
         ))))
 
 
@@ -214,17 +221,22 @@
                       (negation (cdr cexp)))
                 (error "ERROR: All list members must be of type number."))
             )]
+       [else (error "Error: Operation not allowed!")]
        )
     ))
 
 ; note: this function takes an array and alist of indexes and returns corresponding element.
 (define array-value
   (lambda (var idx_list env)
-    (let ([var (list-ref var (value-of-exp (car idx_list) env))])
-      (if (eqv? (length idx_list) 1)
-          var
-          (array-value var (cdr idx_list) env)))
-    ))
+    (cond
+      [(not (list? var)) (error "ERROR: Variable must be of type list.")]
+      [(> 0 (car idx_list)) (error "ERROR: List index cannot be negative.")]
+      [(>= (length var) (car idx_list)) (error "ERROR: Index is greater than array length.")]
+      [else (let ([var (list-ref var (value-of-exp (car idx_list) env))])
+        (if (eqv? (length idx_list) 1)
+            var
+            (array-value var (cdr idx_list) env)))]
+      )))
        
        
 
