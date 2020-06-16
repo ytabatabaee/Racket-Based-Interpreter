@@ -2,15 +2,15 @@ a = 1;
 b = 2;
 c = 3;
 a = 3;
-s1 = "aa bb "
-s2 = "cc dd"
+s1 = "aa bb ";
+s2 = "cc dd";
 if a > 2 then 
 	if s1 + s2 == "aa bb cc dd" then 
 		c = 4
 	else
 		c = 5
-	c = 6
+	endif
 else
-	c = 7
-;
+	c = 6
+endif;
 return c
