@@ -1,5 +1,7 @@
 #lang racket
 
+(provide my-lexer)
+
 
 (require parser-tools/lex
          (prefix-in : parser-tools/lex-sre)

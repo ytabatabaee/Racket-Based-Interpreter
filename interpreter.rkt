@@ -1,6 +1,7 @@
 #lang racket
 
 (require "environment.rkt")
+(provide interpret-cmd)
 
 ; command → unitcom | command; unitcom
 ; parser output: ((uc) (uc) ... (uc))

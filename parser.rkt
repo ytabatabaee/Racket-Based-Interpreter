@@ -1,5 +1,8 @@
 #lang racket
 
+(require "lexer.rkt")
+(provide gram-parser)
+
 
 (require parser-tools/lex
          (prefix-in : parser-tools/lex-sre)
@@ -8,134 +11,8 @@
 (define-tokens a (VAR NUM STR))
 (define-empty-tokens b (comma semicolon EOF plus do while end if then else endif equal notequal return greater less minus mult div TRUE FALSE NULL Num Lbr Lpar Rbr Rpar assign))
 
-(define my-lexer
-	(lexer
-		[","
-		;=>
-		(token-comma)]
 
-		[";"
-		;=>
-		(token-semicolon)]
-                
-		["+"
-		;=>
-		(token-plus)]
-                
-		["-"
-		;=>
-		(token-minus)]
-
-                ["*"
-                ;=>
-                (token-mult)]
-
-		["/"
-		;=>
-		(token-div)]
-
-		[">"
-		;=>
-		(token-greater)]
-
-		["<"
-		;=>
-		(token-less)]
-
-		["=="
-		;=>
-		(token-equal)]
-
-		["!="
-		;=>
-		(token-notequal)]
-
-		["="
-		;=>
-		(token-assign)]
-
-		["("
-		;=>
-		(token-Lpar)]
-
-		[")"
-		;=>
-		(token-Rpar)]
-
-		["["
-		;=>
-		(token-Lbr)]
-
-		["]"
-		;=>
-		(token-Rbr)]
-
-		["true"
-		;=>
-		(token-TRUE)]
-
-		["false"
-		;=>
-		(token-FALSE)]
-
-		["null"
-		;=>
-		(token-NULL)]
-
-		["if"
-		;=>
-		(token-if)]
-
-		["then"
-		;=>
-		(token-then)]
-
-		["else"
-		;=>
-		(token-else)]
-
-		["endif"
-		;=>
-		(token-endif)]
-
-		["while"
-		;=>
-		(token-while)]
-
-		["do"
-		;=>
-		(token-do)]
-
-		["end"
-		;=>
-		(token-end)]
-
-		["return"
-		;=>
-		(token-return)]
-
-		[(:or (:+ (char-range #\0 #\9)) (:: (:+ (char-range #\0 #\9)) #\. (:+ (char-range #\0 #\9))))
-		;=>
-		(token-NUM (string->number lexeme))]
-
-		[(:+ (:or (char-range #\a #\z) (char-range #\A #\Z)))
-                 ; =>
-                 (token-VAR (string->symbol lexeme))]
-
-		[(:: #\" (:* any-char whitespace) #\")
-		;=>
-                 (token-STR lexeme)]
-
-		[whitespace
-		;=>
-		(my-lexer input-port)]
-
-		[(eof)
-		;=>
-		(token-EOF)]
-		))
-
-(define gram_parser
+(define gram-parser
   (parser
    (start command)
    (end EOF)
@@ -210,4 +87,4 @@
 
 (define lex-this (lambda (lexer input) (lambda () (lexer input))))
 (define lex (lex-this my-lexer (open-input-string test10)))
-(let ((parser-res (gram_parser lex))) parser-res)
+(let ((parser-res (gram-parser lex))) parser-res)
