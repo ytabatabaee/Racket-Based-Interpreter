@@ -1,2 +1,3 @@
 a = 3;
 if a > 2 then a = a + 1 else a = 4;
+return a
