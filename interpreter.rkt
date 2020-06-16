@@ -281,6 +281,8 @@
       (else (value-of-aexp exp env)))))
 
 
+;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
+
 ; todo complete this
 (define id?
   (lambda (sym)
@@ -293,4 +295,4 @@
 ;(interpret-cmd '((return (list ((num 19) null false (list ((num 10) empty)) empty)))) '())
 ;(interpret-cmd '((if (> (num 10) (num 4)) ((return (list ((* (num 2) (num 3)) (- (num 7) (num 9)) empty)))) ((return (/ (num 8) (num 10)))))) '())
 
-(define (i a) (interpret-cmd a '()))
+;(define (i a) (interpret-cmd a '()))

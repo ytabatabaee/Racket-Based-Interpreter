@@ -74,6 +74,8 @@
     ))
    )
 
+;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
+
 (define test1 "while 10 do return true end")
 (define test2 "while 10 * [1, 3 , 2 , true, []] do return true end")
 (define test3 "return false; return true")
@@ -85,6 +87,6 @@
 (define test9 "x = 5; y= [1, 2, 3, [4, 5]]; return false + [x>10, x<20, x!=y[3][1]]")
 (define test10 "return [\"b\", 1] + \"a\"")
 
-(define lex-this (lambda (lexer input) (lambda () (lexer input))))
-(define lex (lex-this my-lexer (open-input-string test10)))
-(let ((parser-res (gram-parser lex))) parser-res)
+;(define lex-this (lambda (lexer input) (lambda () (lexer input))))
+;(define lex (lex-this my-lexer (open-input-string test9)))
+;(let ((parser-res (gram-parser lex))) parser-res)
