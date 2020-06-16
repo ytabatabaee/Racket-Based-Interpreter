@@ -154,3 +154,48 @@ return ["a", "b"] + "c"
 
 ["ac", "bc"]
 
+return "c" + ["a", "b"]
+
+["ca", "cb"]
+
+return [2, 3] + ["ab", null]
+
+[2, 3, "ab", null]
+
+return true * false
+
+false
+
+return true + false
+
+true
+
+return false * [false, true, true]
+
+[false, false, false]
+
+return false * [false, null, true]
+
+Error
+
+return [false, true] * true
+
+[false, true]
+
+return [true, false] + true
+
+[true, true]
+
+return false + [true, null]
+
+Error
+
+return true + [false]
+
+[true]
+
+return [2, 4, 6, 8] / 2
+
+return 2 / [2, 4, 8]
+
+return (2 + 3 * 5) / 7
