@@ -122,9 +122,9 @@
 
 		[(:: "\"" (:* (:- any-char "\"")) "\"" )
 		;=>
-                 (token-STR lexeme)]
+                 (token-STR (substring lexeme 1 (- (string-length lexeme) 1)))]
 
-		[whitespace
+		[whitespaces
 		;=>
 		(my-lexer input-port)]
 
