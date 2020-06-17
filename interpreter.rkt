@@ -83,9 +83,9 @@
                         
                   [(and (list? val1) (or (number? val2) (string? val2)))
                    (if (null? val1)
-                       '()
+                       #t
                        (if (or (and (number? val2) (number? (car val1))) (and (string? val2) (string? (car val1))))
-                           (cons ((compare op) (car val1) val2) ((compare op) (cdr val1) val2))
+                           (and ((compare op) (car val1) val2) ((compare op) (cdr val1) val2))
                            (error "Error: Comparison not allowed due to type inconsistency!"))
                        )]
 
@@ -118,7 +118,7 @@
              [(and (number? val2) (not (number? (car val1)))) #f]
              [(and (boolean? val2) (not (boolean? (car val1)))) #f]
              [(and (null? val2) (not (null? (car val1)))) #f]
-             [else (is-equal (cdr val1) val2)])
+             [else (and (is-equal (car val1) val2) (is-equal (cdr val1) val2))])
            )]
 
       [(or (number? val1) (string? val1) (null? val1) (boolean? val1)) (equal? val1 val2)]
@@ -152,7 +152,7 @@
          (if (null? val1)
              '()
              (if (string? (car val1))
-                 (cons (string-append val2 (car val1))
+                 (cons (string-append (car val1) val2)
                        ((binary-operation op) (cdr val1) val2))
                  (error "All list members must be of type string."))
              )]
@@ -216,10 +216,10 @@
        [(list? cexp)
         (if (null? cexp)
             '()
-            (if (number? (car cexp))
-                (cons (- (car cexp))
+            (if (or (number? (car cexp)) (boolean? (car cexp)))
+                (cons (negation (car cexp))
                       (negation (cdr cexp)))
-                (error "ERROR: All list members must be of type number."))
+                (error "ERROR: All list members must be of type number or boolean."))
             )]
        [else (error "Error: Operation not allowed!")]
        )
@@ -230,8 +230,8 @@
   (lambda (var idx_list env)
     (cond
       [(not (list? var)) (error "ERROR: Variable must be of type list.")]
-      [(> 0 (car idx_list)) (error "ERROR: List index cannot be negative.")]
-      [(>= (length var) (car idx_list)) (error "ERROR: Index is greater than array length.")]
+      [(> 0 (value-of-exp (car idx_list) env)) (error "ERROR: List index cannot be negative.")]
+      [(<= (length var) (value-of-exp (car idx_list) env)) (error "ERROR: Index is greater than array length.")]
       [else (let ([var (list-ref var (value-of-exp (car idx_list) env))])
         (if (eqv? (length idx_list) 1)
             var
