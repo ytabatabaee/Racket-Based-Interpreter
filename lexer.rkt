@@ -124,13 +124,15 @@
 		;=>
                  (token-STR (substring lexeme 1 (- (string-length lexeme) 1)))]
 
-		[whitespaces
+		[whitespace
 		;=>
 		(my-lexer input-port)]
 
 		[(eof)
 		;=>
 		(token-EOF)]
+
+                [any-char (error "Error: no token matched for" lexeme)]
 		))
 
 
@@ -143,7 +145,7 @@ if a == 2.011 * 6 then
 endif")
 
 (define test2 "while 10 * [34 null] then do return return true end")
-(define test3 "return [\"blue sky\", 1] + \"a\"")
+(define test3 "return [\"blue sky\", 1] + \"a\" #x ")
 
 ;(my-lexer (open-input-string test2))
 
