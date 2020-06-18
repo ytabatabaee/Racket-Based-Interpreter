@@ -139,6 +139,9 @@
 (define-tokens a (NUM VAR STR))
 (define-empty-tokens b (EOF plus minus mult div greater less equal notequal assign Lpar Rpar Lbr Rbr TRUE FALSE NULL if then else endif while do end return comma semicolon)) ;?? NULL??
 
+
+;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
+
 (define test1  "1+2+ 3 +   4
 if a == 2.011 * 6 then
     b = \"Salam, chetori?! 1234 \"
@@ -149,15 +152,15 @@ endif")
 
 ;(my-lexer (open-input-string test2))
 
-(define lex-this (lambda (lexer input) (lambda () (lexer input))))
-(define lex (lex-this my-lexer (open-input-string test3)))
-(lex)
-(lex)
-(lex)
-(lex)
-(lex)
-(lex)
-(lex)
-(lex)
-(lex)
-(lex)
+;(define lex-this (lambda (lexer input) (lambda () (lexer input))))
+;(define lex (lex-this my-lexer (open-input-string test3)))
+;(lex)
+;(lex)
+;(lex)
+;(lex)
+;(lex)
+;(lex)
+;(lex)
+;(lex)
+;(lex)
+;(lex)
