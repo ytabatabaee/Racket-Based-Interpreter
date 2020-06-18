@@ -110,18 +110,18 @@
                    #f)
                ))]
     
-      [(and (list? val1) (or (string? val2) (number? val2) (boolean? val2) (null? val2)))
+      [(and (list? val1) (or (string? val2) (number? val2) (boolean? val2) (null-type? val2)))
        (if (null? val1)
            #t
            (cond
              [(and (string? val2) (not (string? (car val1)))) #f]
              [(and (number? val2) (not (number? (car val1)))) #f]
              [(and (boolean? val2) (not (boolean? (car val1)))) #f]
-             [(and (null? val2) (not (null? (car val1)))) #f]
+             [(and (null-type? val2) (not (null-type? (car val1)))) #f]
              [else (and (is-equal (car val1) val2) (is-equal (cdr val1) val2))])
            )]
 
-      [(or (number? val1) (string? val1) (null? val1) (boolean? val1)) (equal? val1 val2)]
+      [(or (number? val1) (string? val1) (null-type? val1) (boolean? val1)) (eqv? val1 val2)]
       
       [else #f])
       ))
@@ -250,7 +250,7 @@
       ((eq? (car exp) 'neg) (negation (value-of-cexp (cadr exp) env)))
       ((eq? (car exp) 'par) (value-of-exp (cadr exp) env))
       ((eq? (car exp) 'num) (cadr exp))
-      ((eq? (car exp) 'null) '())
+      ((eq? (car exp) 'null) 'null)
       ((eq? (car exp) 'true) #t)
       ((eq? (car exp) 'false) #f)
       ((eq? (car exp) 'string) (cadr exp))  
@@ -292,7 +292,9 @@
       ((eq? (car exp) '!=) (not (is-equal (value-of-aexp (cadr exp) env) (value-of-aexp (caddr exp) env))))
       (else (value-of-aexp exp env)))))
 
-
+(define null-type?
+  (lambda (sym)
+    (eqv? sym 'null)))
 ;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
 
 ; todo complete this

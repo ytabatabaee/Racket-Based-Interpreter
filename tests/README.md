@@ -62,11 +62,11 @@ return [true] == "ab"
 
 false
 
-**return [null, null] == null
+return [null, null] == null
 
 true
 
-**return [false] == null
+return [false] == null
 
 false
 
@@ -142,7 +142,7 @@ return -[false, true]
 
 [true, false]
 
-**return "salam" + "aleyk" + "chetori"
+return "salam" + "aleyk" + "chetori"
 
 "salamaleykchetori"
 
@@ -158,7 +158,7 @@ return "c" + ["a", "b"]
 
 ["ca", "cb"]
 
-**return [2, 3] + ["ab", null]
+return [2, 3] + ["ab", null]
 
 [2, 3, "ab", null]
 
