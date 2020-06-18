@@ -102,7 +102,7 @@
     (cond
       [(and (list? val1) (list? val2))
        (if (xor (null? val1) (null? val2))
-           (error "ERROR: For comparison, lists must be of same size.")
+           #f ;(error "ERROR: For comparison, lists must be of same size.")
            (if (null? val1)
                #t
                (if (is-equal (car val1) (car val2))
