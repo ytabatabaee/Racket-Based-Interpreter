@@ -75,7 +75,7 @@
                        (string<? val1 val2)
                        (if (eqv? op >)
                            (string>? val1 val2)
-                           (error "Error: Operation not allowed!")
+                           (error 'compare "Operation not allowed!")
                            ))]
 
                   [(and (number? val1) (number? val2))
@@ -86,10 +86,10 @@
                        #t
                        (if (or (and (number? val2) (number? (car val1))) (and (string? val2) (string? (car val1))))
                            (and ((compare op) (car val1) val2) ((compare op) (cdr val1) val2))
-                           (error "Error: Comparison not allowed due to type inconsistency!"))
+                           (error 'compare "Comparison not allowed due to type inconsistency!"))
                        )]
 
-                  [else (error "Error: Comparison not allowed!")]
+                  [else (error 'compare "Comparison not allowed!")]
                         
 		))))
 
@@ -140,10 +140,10 @@
 
         [(and (boolean? val1) (boolean? val2))
          (if (eqv? op +) (or val1 val2)
-             (if (eqv? op *) (and val1 val2) (error "Error: Operation not allowed!")))]
+             (if (eqv? op *) (and val1 val2) (error 'binary-operation "Operation * not allowed!")))]
 
         [(and (string? val1) (string? val2))
-         (if (eqv? op +) (string-append val1 val2) (error "Error: Operation not allowed!"))]
+         (if (eqv? op +) (string-append val1 val2) (error 'binary-operation "Operation + not allowed!"))]
 
         [(and (list? val1) (list? val2) (eq? op +))
          (append val1 val2)]
@@ -154,7 +154,7 @@
              (if (string? (car val1))
                  (cons (string-append (car val1) val2)
                        ((binary-operation op) (cdr val1) val2))
-                 (error "All list members must be of type string."))
+                 (error 'binary-operation "All list members must be of type string."))
              )]
 
         [(and (string? val1) (list? val2) (eq? op +))
@@ -163,7 +163,7 @@
              (if (string? (car val2))
                  (cons (string-append val1 (car val2))
                        ((binary-operation op) val1 (cdr val2)))
-                 (error "ERROR: All list members must be of type string."))
+                 (error 'binary-operation "All list members must be of type string."))
              )]
 
         [(and (list? val1) (boolean? val2))
@@ -172,7 +172,7 @@
              (if (boolean? (car val1))
                  (cons ((binary-operation op) (car val1) val2)
                        ((binary-operation op) (cdr val1) val2))
-                 (error "ERROR: All list members must be of type boolean."))
+                 (error 'binary-operation "All list members must be of type boolean."))
              )]
 
         [(and (list? val2) (boolean? val1))
@@ -181,7 +181,7 @@
              (if (boolean? (car val2))
                  (cons ((binary-operation op) (car val2) val1)
                        ((binary-operation op) (cdr val2) val1))
-                 (error "ERROR: All list members must be of type boolean."))
+                 (error 'binary-operation "All list members must be of type boolean."))
              )]
 
         [(and (list? val1) (number? val2))
@@ -190,7 +190,7 @@
              (if (number? (car val1))
                  (cons (op (car val1) val2)
                        ((binary-operation op) (cdr val1) val2))
-                 (error "ERROR: All list members must be of type number."))
+                 (error 'binary-operation "All list members must be of type number."))
              )]
 
         [(and (number? val1) (list? val2))
@@ -199,10 +199,10 @@
              (if (number? (car val2))
                  (cons (op val1 (car val2))
                        ((binary-operation op) val1 (cdr val2)))
-                 (error "ERROR: All list members must be of type number."))
+                 (error 'binary-operation "All list members must be of type number."))
              )]
 
-        [else (error "Error: Operation not allowed!")] 
+        [else (error 'binary-operation "Operation not allowed!")] 
         ))))
 
 
@@ -219,9 +219,9 @@
             (if (or (number? (car cexp)) (boolean? (car cexp)))
                 (cons (negation (car cexp))
                       (negation (cdr cexp)))
-                (error "ERROR: All list members must be of type number or boolean."))
+                (error 'negation "All list members must be of type number or boolean."))
             )]
-       [else (error "Error: Operation not allowed!")]
+       [else (error 'negation "Operation - not allowed!")]
        )
     ))
 
@@ -229,9 +229,9 @@
 (define array-value
   (lambda (var idx_list env)
     (cond
-      [(not (list? var)) (error "ERROR: Variable must be of type list.")]
-      [(> 0 (value-of-exp (car idx_list) env)) (error "ERROR: List index cannot be negative.")]
-      [(<= (length var) (value-of-exp (car idx_list) env)) (error "ERROR: Index is greater than array length.")]
+      [(not (list? var)) (error 'array-value "Variable must be of type list.")]
+      [(> 0 (value-of-exp (car idx_list) env)) (error 'array-value "List index cannot be negative.")]
+      [(<= (length var) (value-of-exp (car idx_list) env)) (error 'array-value "Index is greater than array length.")]
       [else (let ([var (list-ref var (value-of-exp (car idx_list) env))])
         (if (eqv? (length idx_list) 1)
             var
@@ -297,10 +297,6 @@
     (eqv? sym 'null)))
 ;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
 
-; todo complete this
-(define id?
-  (lambda (sym)
-    #t))
 
 
 ;(interpret-cmd '((return (false)) (return (true))) '())

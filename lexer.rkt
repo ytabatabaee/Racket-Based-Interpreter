@@ -132,7 +132,7 @@
 		;=>
 		(token-EOF)]
 
-                [any-char (error "Error: no token matched for" lexeme)]
+                [any-char (error 'my-lexer "No token matched for ~a" lexeme)]
 		))
 
 
