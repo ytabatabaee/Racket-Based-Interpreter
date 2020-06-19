@@ -121,7 +121,7 @@
              [else (and (is-equal (car val1) val2) (is-equal (cdr val1) val2))])
            )]
 
-      [(or (number? val1) (string? val1) (null-type? val1) (boolean? val1)) (eqv? val1 val2)]
+      [(or (number? val1) (string? val1) (null-type? val1) (boolean? val1)) (equal? val1 val2)]
       
       [else #f])
       ))
