@@ -16,7 +16,8 @@
   (parser
    (start command)
    (end EOF)
-   (error void) ;May need changing
+   (error (lambda (ok? name value)
+            (printf "Couldn't parse: ~a\n" name))) ;May need changing
    (tokens a b)
    (grammar
 
