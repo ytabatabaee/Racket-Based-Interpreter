@@ -2,4 +2,4 @@
 
 ## Authors
 
-* **Arezou Pakzad* - **Rozhin Nobahari** - **Yasamin Tabatabaee**
+* Arezou Pakzad - Rozhin Nobahari - Yasamin Tabatabaee
