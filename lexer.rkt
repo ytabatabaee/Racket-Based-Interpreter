@@ -68,6 +68,14 @@
 		;=>
 		(token-Rbr)]
 
+		["{"
+		;=>
+		(token-Lcbr)]
+
+		["}"
+		;=>
+		(token-Rcbr)]
+                
 		["true"
 		;=>
 		(token-TRUE)]
@@ -112,6 +120,10 @@
 		;=>
 		(token-return)]
 
+                ["func"
+		;=>
+		(token-func)]
+
 		[(:or (:+ (char-range #\0 #\9)) (:: (:+ (char-range #\0 #\9)) #\. (:+ (char-range #\0 #\9))))
 		;=>
 		(token-NUM (string->number lexeme))]
@@ -137,7 +149,7 @@
 
 
 (define-tokens a (NUM VAR STR))
-(define-empty-tokens b (EOF plus minus mult div greater less equal notequal assign Lpar Rpar Lbr Rbr TRUE FALSE NULL if then else endif while do end return comma semicolon)) ;?? NULL??
+(define-empty-tokens b (EOF plus minus mult div greater less equal notequal assign Lpar Rpar Lbr Rbr Lcbr Rcbr TRUE FALSE NULL if then else endif while do end return comma semicolon func)) ;?? NULL??
 
 
 ;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
@@ -149,11 +161,12 @@ endif")
 
 (define test2 "while 10 * [34 null] then do return return true end")
 (define test3 "return [\"blue sky\", 1] + \"a\" #x ")
+(define test4 "f = func(a, b) {return  a - b}; temp = f(2, 4)")
 
 ;(my-lexer (open-input-string test2))
 
 ;(define lex-this (lambda (lexer input) (lambda () (lexer input))))
-;(define lex (lex-this my-lexer (open-input-string test3)))
+;(define lex (lex-this my-lexer (open-input-string test4)))
 ;(lex)
 ;(lex)
 ;(lex)

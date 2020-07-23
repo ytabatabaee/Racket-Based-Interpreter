@@ -9,7 +9,7 @@
          parser-tools/yacc)
 
 (define-tokens a (VAR NUM STR))
-(define-empty-tokens b (comma semicolon EOF plus do while end if then else endif equal notequal return greater less minus mult div TRUE FALSE NULL Num Lbr Lpar Rbr Rpar assign))
+(define-empty-tokens b (comma semicolon EOF plus do while end if then else endif equal notequal return greater less minus mult div TRUE FALSE NULL Num Lbr Lpar Rbr Rpar Lcbr Rcbr assign func))
 
 
 (define gram-parser
@@ -33,7 +33,10 @@
     
     (ifcom ((if exp then command else command endif) (list 'if $2 $4 $6)))
     
-    (assigncom ((VAR assign exp) (list 'assign $1 $3)))
+    (assigncom ((VAR assign exp) (list 'assign $1 $3))
+               ((VAR assign function) (list 'assign $1 $3))
+               ((VAR assign call) (list 'assign $1 $3)
+               ))
     
     (returncom ((return exp) (list 'return $2)))
     
@@ -72,6 +75,15 @@
              ((Lbr exp Rbr listmem) (append (list $2) $4))
              )
 
+    (function ((func Lpar vars Rpar Lcbr command Rcbr) (list 'func $3 $6)))
+
+    (vars ((VAR) (list $1 'empty))
+          ((VAR comma vars) (cons $1 $3)))
+
+    (call ((VAR Lpar args Rpar) (list 'func_call $1 $3)))
+
+    (args ((exp) (list $1 'empty))
+          ((exp comma args) (cons $1 $3)))
     ))
    )
 
@@ -87,7 +99,8 @@
 (define test8 "x= [[1, 2], [2, 3]]; return x[1][1]")
 (define test9 "x = 5; y= [1, 2, 3, [4, 5]]; return false + [x>10, x<20, x!=y[3][1]]")
 (define test10 "return [\"b\", 1] + \"a\"")
+(define test11 "f = func(a, b) {return  a - b}; temp = f(2, 4)")
 
 ;(define lex-this (lambda (lexer input) (lambda () (lexer input))))
-;(define lex (lex-this my-lexer (open-input-string test9)))
+;(define lex (lex-this my-lexer (open-input-string test11)))
 ;(let ((parser-res (gram-parser lex))) parser-res)
