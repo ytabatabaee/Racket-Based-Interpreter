@@ -69,11 +69,18 @@
 
 (define merge-sort
   (lambda (a)
-    0))
+    (cond
+    [(null? a) a]
+    [(null? (cdr a)) a]
+    [(null? (cddr a)) (merge (list (car a)) (cdr a))]
+    [else
+     (let ([mid (ceiling (/ (length a) 2))])
+       (merge (merge-sort (take a mid)) (merge-sort (drop a mid))))])))
 
 
 (define eval
   (lambda (s)
+    ; this should be same as evalute function that we have in program.rkt
     0))
 
 ;;;;;;;;;;;;;;;;;;;
@@ -99,3 +106,5 @@
 
 ;(merge '(1 4) '(1 2 8))
 ;(merge '(35 62 81 90 91) '(3 83 85 90))
+
+;(merge-sort '(2 1 -10 3 8))
