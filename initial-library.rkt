@@ -1,6 +1,7 @@
 #lang racket
 
-; assuming base is a number, exponent is an integer 
+; assuming base is a number, exponent is an integer
+; can also use 'expt' which is racket primitive function
 (define pow
   (lambda (a b)
     (if (number? a)
@@ -14,7 +15,6 @@
         (error 'pow "Base should be a number!"))))
 
 
-
 ; make a list of a number of bs
 (define make-list
   (lambda (a b)
@@ -25,13 +25,23 @@
         (error 'make-list "Count should be an integer!"))))
 
 
+; one-layer reverse
 (define reverse
   (lambda (a)
-    0))
+    (cond
+    [(null? a) '()]
+    [(list? a) (append (reverse (cdr a)) (list (car a)))]
+    [else a])))
 
+; recursive reverse
 (define reverse-all
   (lambda (a)
-    0))
+    (cond
+    [(null? a) '()]
+    [(list? a)
+      (append (reverse-all (cdr a)) (list (reverse-all (car a))))]
+    [else a])))
+
 
 (define set
   (lambda (a index value)
@@ -61,3 +71,6 @@
 ;(make-list -1 'a)
 ;(make-list 'b 'a)
 ;(make-list 10 '(1 1))
+
+;(reverse-all '(1 (2 3) (4 (5 6))))
+;(reverse '(1 (2 3) (4 (5 6))))
