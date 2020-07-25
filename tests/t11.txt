@@ -1,0 +1,4 @@
+listmaker = func(a, b) 
+	{if a == 0 then return [] else a = listmaker(a-1, b); return a + [b] endif};
+b = listmaker(3, 5);
+return b
