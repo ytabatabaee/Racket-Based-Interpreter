@@ -124,8 +124,12 @@
 
 (define eval
   (lambda (s)
-    ; this should be same as evalute function that we have in program.rkt
-    0))
+    (let* ([prog (s)]
+          [lex-this (lambda (lexer input) (lambda () (lexer input)))]
+          [lex (lex-this my-lexer (open-input-string prog))])
+      (let ((parser-res (gram-parser lex))) (interpret-cmd parser-res '()))
+      )
+    ))
 
 ;;;;;;;;;;;;;;;;;;;
 ;tests
