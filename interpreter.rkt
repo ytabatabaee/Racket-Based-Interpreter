@@ -147,12 +147,12 @@
         [(and (eqv? op *) (number? val1) (thunk? val2))
          (if (eqv? val1 0)
              0
-             ((binary-operation op) val1 (value-of-thunk val2)))]
+             ((binary-operation op) val1 (value-of-thunk 'x val2)))]
 
         [(and (eqv? op *) (boolean? val1) (thunk? val2))
          (if (eqv? val1 #f)
              #f
-             ((binary-operation op) val1 (value-of-thunk val2)))]
+             ((binary-operation op) val1 (value-of-thunk 'x val2)))]
 
         [(and (number? val1) (number? val2))
          (op val1 val2)]
@@ -264,8 +264,8 @@
 (define value-of-cexp
   (lambda (exp env)
     (cond
-      ((eq? (car exp) 'var) (value-of-thunk (apply-env (cadr exp) env)))
-      ((eq? (car exp) 'array_var) (array-value (value-of-thunk (apply-env (cadr exp) env)) (caddr exp) env))
+      ((eq? (car exp) 'var) (value-of-thunk (cadr exp) (apply-env (cadr exp) env)))
+      ((eq? (car exp) 'array_var) (array-value (value-of-thunk (cadr exp) (apply-env (cadr exp) env)) (caddr exp) env))
       ((eq? (car exp) 'neg) (negation (value-of-cexp (cadr exp) env)))
       ((eq? (car exp) 'par) (value-of-exp (cadr exp) env))
       ((eq? (car exp) 'num) (cadr exp))
@@ -312,7 +312,7 @@
       (else (value-of-aexp exp env)))))
 
 (define value-of-thunk
-  (lambda (var thunk env)
+  (lambda (var thunk)
     (if (thunk? thunk)
         (cond
           ;if thunk is function definition
@@ -321,16 +321,17 @@
                  (saved-env (caddr thunk)))
              (let ((function (define_function var func-def saved-env)))
                (begin
-                 (update-env var function env)
+                 ;(update-env var function env)
                  function)))]
 
           ;if thunk is function call
-          [(eqv? (caadr thunk) 'func-call)
+          [(eqv? (caadr thunk) 'func_call)
            (let ((args (cadr thunk))
                  (saved-env (caddr thunk)))
              (let ((function-val (call_function args saved-env)))
                (begin
-                 (update-env var function-val env)
+                 ;(update-env var function-val env)
+                 ;(display args)
                  function-val)))]
 
           ;if thunk is exp
@@ -339,7 +340,7 @@
                  (saved-env (caddr thunk)))
              (let ((val (value-of-exp exp saved-env)))
                (begin
-                 (update-env var val env)
+                 ;(update-env var val env)
                  val)))]
           )
         
@@ -374,7 +375,7 @@
   (lambda (arguments env)
     (let* ([f_name (cadr arguments)]
            [f_args (make-thunk (cons 'list (cddr arguments)) env)])
-          ((value-of-thunk (apply-env f_name env)) f_args))
+          ((value-of-thunk f_name (apply-env f_name env)) f_args))
     ))
 
 
@@ -384,14 +385,15 @@
     (let* ([f_args (cadr definition)]
            [f_body (caddr definition)])
       (lambda (arguments)
-        (if (eq? (length arguments) (- (length f_args) 1))
+        (if (eq? (length (cdadr arguments)) (- (length f_args) 1))
             (begin
             (set! env (update-env f_name (define_function f_name definition env) env))
-            (for/list ([i (build-list (length arguments) values)])
+            (for/list ([i (build-list (length (cdadr arguments)) values)])
               (set! env (update-env (list-ref f_args i)
-                                    (list-ref arguments i) env)))
+                                    (list-ref (cdadr arguments) i) env)))
             (interpret-cmd f_body env))
-            (error "ERROR: Invalid number of arguments."))
+            (error "ERROR: Invalid number of arguments.")
+            )
       ))))
 ;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
 
