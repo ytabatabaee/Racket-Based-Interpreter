@@ -1,0 +1,4 @@
+fact = func(n) 
+{if n==1 then return 1 else temp = fact(n-1); return n * temp endif};
+t = fact(5);
+return t
