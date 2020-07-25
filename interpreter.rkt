@@ -372,7 +372,7 @@
 (define call_function
   (lambda (arguments env)
     (let* ([f_name (cadr arguments)]
-           [f_args (value-of-exp (cons 'list (cddr arguments)) env)])
+           [f_args (make-thunk (cons 'list (cddr arguments)) env)])
           ((value-of-thunk (apply-env f_name env)) f_args))
     ))
 
