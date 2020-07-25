@@ -135,6 +135,16 @@
   (lambda (op)
     (lambda (val1 val2)
       (cond
+        [(and (eqv? op *) (number? val1) (thunk? val2))
+         (if (eqv? val1 0)
+             0
+             ((binary-operation op) val1 (value-of-thunk val2)))]
+
+        [(and (eqv? op *) (boolean? val1) (thunk? val2))
+         (if (eqv? val1 #f)
+             #f
+             ((binary-operation op) val1 (value-of-thunk val2)))]
+
         [(and (number? val1) (number? val2))
          (op val1 val2)]
 
@@ -268,7 +278,7 @@
 (define value-of-bexp
   (lambda (exp env)
     (cond
-      ((eq? (car exp) '*) ((binary-operation *) (value-of-cexp (cadr exp) env) (value-of-bexp (caddr exp) env)))
+      ((eq? (car exp) '*) ((binary-operation *) (value-of-cexp (cadr exp) env) (make-thunk (caddr exp) env)))
       ((eq? (car exp) '/) ((binary-operation /) (value-of-cexp (cadr exp) env) (value-of-bexp (caddr exp) env)))
       (else (value-of-cexp exp env)))))
 
@@ -291,6 +301,28 @@
       ((eq? (car exp) '==) (is-equal (value-of-aexp (cadr exp) env) (value-of-aexp (caddr exp) env)))
       ((eq? (car exp) '!=) (not (is-equal (value-of-aexp (cadr exp) env) (value-of-aexp (caddr exp) env))))
       (else (value-of-aexp exp env)))))
+
+(define value-of-thunk
+  (lambda (thunk)
+    (let ((exp (cadr thunk))
+          (saved-env (caddr thunk)))
+      (value-of-exp exp saved-env))))
+
+(define make-thunk
+  (lambda (exp env)
+    (list 'thunk exp env)))
+
+(define add-thunk-to-env
+  (lambda (var exp env)
+    (update-env var (list 'thunk exp env) env)))
+
+(define thunk?
+  (lambda (lst)
+    (and
+     (list? lst)
+     (not (null? lst))
+     (equal? (car lst) 'thunk))))
+    
 
 (define null-type?
   (lambda (sym)
