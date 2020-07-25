@@ -57,7 +57,7 @@
            (add-thunk-to-env var func-def env))]
         
         [(eq? (caaddr unitcom) 'func_call)
-         (let ((func-call (caddr unitcom) env))
+         (let ((func-call (caddr unitcom)))
            (add-thunk-to-env var func-call env))]
         
         [else (let ((exp (caddr unitcom)))
@@ -318,7 +318,7 @@
           ;if thunk is function definition
           [(eqv? (caadr thunk) 'func)
            (let ((func-def (cadr thunk))
-                 (saved-env (caddr) thunk))
+                 (saved-env (caddr thunk)))
              (let ((function (define_function var func-def saved-env)))
                (begin
                  (update-env var function env)
@@ -327,11 +327,11 @@
           ;if thunk is function call
           [(eqv? (caadr thunk) 'func-call)
            (let ((args (cadr thunk))
-                 (saved-env (caddr) thunk))
-             (let ((function_val (call_function args saved-env)))
+                 (saved-env (caddr thunk)))
+             (let ((function-val (call_function args saved-env)))
                (begin
-                 (update-env var function_val env)
-                 function)))]
+                 (update-env var function-val env)
+                 function-val)))]
 
           ;if thunk is exp
           [else
@@ -340,7 +340,8 @@
              (let (val (value-of-exp exp saved-env))
                (begin
                  (update-env var val env)
-                 val)))])
+                 val)))]
+          )
         
         ;if there is no thunk, just return the value
         thunk)))
