@@ -337,7 +337,7 @@
           [else
            (let ((exp (cadr thunk))
                  (saved-env (caddr thunk)))
-             (let (val (value-of-exp exp saved-env))
+             (let ((val (value-of-exp exp saved-env)))
                (begin
                  (update-env var val env)
                  val)))]
