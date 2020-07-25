@@ -53,15 +53,15 @@
     (let ((var (cadr unitcom)))
       (cond
         [(eq? (caaddr unitcom) 'func)
-         (let ((function (define_function var (caddr unitcom) env)))
-           (update-env var function env))]
+         (let ((func-def (caddr unitcom)))
+           (add-thunk-to-env var func-def env))]
         
         [(eq? (caaddr unitcom) 'func_call)
-         (let ((function_val (call_function (caddr unitcom) env)))
-           (update-env var function_val env))]
+         (let ((func-call (caddr unitcom) env))
+           (add-thunk-to-env var func-call env))]
         
-        [else (let ((val (value-of-exp (caddr unitcom) env)))
-                (add-thunk-to-env var val env))]
+        [else (let ((exp (caddr unitcom)))
+                (add-thunk-to-env var exp env))]
         ))))
 
 
@@ -312,13 +312,40 @@
       (else (value-of-aexp exp env)))))
 
 (define value-of-thunk
-  (lambda (thunk)
+  (lambda (var thunk env)
     (if (thunk? thunk)
-        (let ((exp (cadr thunk))
-              (saved-env (caddr thunk)))
-          (value-of-exp exp saved-env))
+        (cond
+          ;if thunk is function definition
+          [(eqv? (caadr thunk) 'func)
+           (let ((func-def (cadr thunk))
+                 (saved-env (caddr) thunk))
+             (let ((function (define_function var func-def saved-env)))
+               (begin
+                 (update-env var function env)
+                 function)))]
+
+          ;if thunk is function call
+          [(eqv? (caadr thunk) 'func-call)
+           (let ((args (cadr thunk))
+                 (saved-env (caddr) thunk))
+             (let ((function_val (call_function args saved-env)))
+               (begin
+                 (update-env var function_val env)
+                 function)))]
+
+          ;if thunk is exp
+          [else
+           (let ((exp (cadr thunk))
+                 (saved-env (caddr thunk)))
+             (let (val (value-of-exp exp saved-env))
+               (begin
+                 (update-env var val env)
+                 val)))])
+        
+        ;if there is no thunk, just return the value
         thunk)))
 
+;thunk: ('thunk exp env)
 (define make-thunk
   (lambda (exp env)
     (list 'thunk exp env)))
@@ -327,12 +354,14 @@
   (lambda (var exp env)
     (update-env var (list 'thunk exp env) env)))
 
+  
+;thunk is a list starting with 'thunk e.g. ('thunk ...)
 (define thunk?
   (lambda (lst)
     (and
      (list? lst)
      (not (null? lst))
-     (equal? (car lst) 'thunk))))
+     (eqv? (car lst) 'thunk))))
     
 
 (define null-type?
@@ -343,8 +372,8 @@
 (define call_function
   (lambda (arguments env)
     (let* ([f_name (cadr arguments)]
-           [f_args (value-of-exp (cons 'list (cddr arguments))env)])
-          ((apply-env f_name env) f_args))
+           [f_args (value-of-exp (cons 'list (cddr arguments)) env)])
+          ((value-of-thunk (apply-env f_name env)) f_args))
     ))
 
 
