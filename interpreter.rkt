@@ -52,8 +52,8 @@
   (lambda (unitcom env)
     (let
         ((var (cadr unitcom))
-         (val (value-of-exp (caddr unitcom) env)))
-      (update-env var val env))))
+         (exp (caddr unitcom)))
+      (add-thunk-to-env var exp env))))
 
 
 ; return exp
@@ -255,8 +255,8 @@
 (define value-of-cexp
   (lambda (exp env)
     (cond
-      ((eq? (car exp) 'var) (apply-env (cadr exp) env))
-      ((eq? (car exp) 'array_var) (array-value (apply-env (cadr exp) env) (caddr exp) env))
+      ((eq? (car exp) 'var) (value-of-thunk (apply-env (cadr exp) env)))
+      ((eq? (car exp) 'array_var) (array-value (value-of-thunk (apply-env (cadr exp) env)) (caddr exp) env))
       ((eq? (car exp) 'neg) (negation (value-of-cexp (cadr exp) env)))
       ((eq? (car exp) 'par) (value-of-exp (cadr exp) env))
       ((eq? (car exp) 'num) (cadr exp))
@@ -304,9 +304,11 @@
 
 (define value-of-thunk
   (lambda (thunk)
-    (let ((exp (cadr thunk))
-          (saved-env (caddr thunk)))
-      (value-of-exp exp saved-env))))
+    (if (thunk? thunk)
+        (let ((exp (cadr thunk))
+              (saved-env (caddr thunk)))
+          (value-of-exp exp saved-env))
+        thunk)))
 
 (define make-thunk
   (lambda (exp env)
