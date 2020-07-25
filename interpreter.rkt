@@ -45,15 +45,24 @@
         env)))
 
 
-; variable = exp
+; variable = exp | variable = function | variable = call
 ; parser output: (assign variable (exp))
 ; returns updated env
 (define interpret-assign
   (lambda (unitcom env)
-    (let
-        ((var (cadr unitcom))
-         (exp (caddr unitcom)))
-      (add-thunk-to-env var exp env))))
+    (let ((var (cadr unitcom)))
+      (cond
+        [(eq? (caaddr unitcom) 'func)
+         (let ((function (define_function var (caddr unitcom) env)))
+           (update-env var function env))]
+        
+        [(eq? (caaddr unitcom) 'func_call)
+         (let ((function_val (call_function (caddr unitcom) env)))
+           (update-env var function_val env))]
+        
+        [else (let ((val (value-of-exp (caddr unitcom) env)))
+                (add-thunk-to-env var val env))]
+        ))))
 
 
 ; return exp
@@ -329,6 +338,31 @@
 (define null-type?
   (lambda (sym)
     (eqv? sym 'null)))
+
+;returns function call's value
+(define call_function
+  (lambda (arguments env)
+    (let* ([f_name (cadr arguments)]
+           [f_args (value-of-exp (cons 'list (cddr arguments))env)])
+          ((apply-env f_name env) f_args))
+    ))
+
+
+;returns a function, given the definition
+(define define_function
+  (lambda (f_name definition env)
+    (let* ([f_args (cadr definition)]
+           [f_body (caddr definition)])
+      (lambda (arguments)
+        (if (eq? (length arguments) (- (length f_args) 1))
+            (begin
+            (set! env (update-env f_name (define_function f_name definition env) env))
+            (for/list ([i (build-list (length arguments) values)])
+              (set! env (update-env (list-ref f_args i)
+                                    (list-ref arguments i) env)))
+            (interpret-cmd f_body env))
+            (error "ERROR: Invalid number of arguments."))
+      ))))
 ;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
 
 
@@ -339,4 +373,4 @@
 ;(interpret-cmd '((return (list ((num 19) null false (list ((num 10) empty)) empty)))) '())
 ;(interpret-cmd '((if (> (num 10) (num 4)) ((return (list ((* (num 2) (num 3)) (- (num 7) (num 9)) empty)))) ((return (/ (num 8) (num 10)))))) '())
 
-;(define (i a) (interpret-cmd a '()))
+(define (i a) (interpret-cmd a '()))
