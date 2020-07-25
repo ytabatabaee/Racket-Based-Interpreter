@@ -3,16 +3,20 @@
 ; assuming base is a number, exponent is an integer
 ; can also use 'expt' which is racket primitive function
 (define pow
-  (lambda (a b)
-    (if (number? a)
-        (if (integer? b)
-            (if (zero? b)
-                1
-                (if (> b 0)
-                    (* a (pow a (- b 1)))
-                    (* (/ 1  a) (pow a (+ b 1)))))
-            (error 'pow "Exponent should be of type integer!"))
-        (error 'pow "Base should be a number!"))))
+  (lambda (lst)
+    ((let ((a (car lst)))
+      ((let ((b (cadr lst)))
+         (if (number? a)
+             (if (integer? b)
+                 (if (zero? b)
+                     1
+                     (if (> b 0)
+                         (* a (pow (list a (- b 1))))
+                         (* (/ 1  a) (pow (list a (+ b 1))))))
+                 (error 'pow "Exponent should be of type integer!"))
+             (error 'pow "Base should be a number!"))))))))
+     
+    
 
 
 ; make a list of a number of bs
@@ -27,20 +31,22 @@
 
 ; one-layer reverse
 (define reverse
-  (lambda (a)
-    (cond
-    [(null? a) '()]
-    [(list? a) (append (reverse (cdr a)) (list (car a)))]
-    [else a])))
+  (lambda (lst)
+    (let ((a (car lst))) 
+      (cond
+        [(null? a) '()]
+        [(list? a) (append (reverse (list (cdr a))) (list (car a)))]
+        [else a]))))
 
 ; recursive reverse
 (define reverse-all
-  (lambda (a)
-    (cond
-    [(null? a) '()]
-    [(list? a)
-      (append (reverse-all (cdr a)) (list (reverse-all (car a))))]
-    [else a])))
+  (lambda (lst)
+    (let ((a (car lst)))
+      (cond
+        [(null? a) '()]
+        [(list? a)
+         (append (reverse-all (list (cdr a))) (list (reverse-all (list (car a)))))]
+        [else a]))))
 
 
 ; set a[index] = value
@@ -96,8 +102,8 @@
 ;(make-list 'b 'a)
 ;(make-list 10 '(1 1))
 
-;(reverse-all '(1 (2 3) (4 (5 6))))
-;(reverse '(1 (2 3) (4 (5 6))))
+;(reverse-all '((1 (2 3) (4 (5 6)))))
+;(reverse '((1 (2 3) (4 (5 6)))))
 
 ;(set '(1 2 3 4) 2 5)
 ;(set '(1 2 3 4) 0 'b)
