@@ -18,7 +18,8 @@
       (set! env (update-env 'set set env))
       (set! env (update-env 'merge merge env))
       (set! env (update-env 'merge-sort merge-sort env))
-      (set! env (update-env 'eval eval env)) 
+      (set! env (update-env 'eval eval env))
+      env
       )))
             
        
