@@ -1,5 +1,10 @@
 #lang racket
 
+(require "lexer.rkt")
+(require "parser.rkt")
+(require "interpreter.rkt")
+(require 2htdp/batch-io)
+
 (provide pow)
 (provide make-list)
 (provide reverse)
@@ -130,14 +135,14 @@
        (merge-func (merge-sort-func (take a mid)) (merge-sort-func (drop a mid))))])))
 
 
-;(define eval
-;  (lambda (s)
-;    (let* ([prog (s)]
-;          [lex-this (lambda (lexer input) (lambda () (lexer input)))]
-;          [lex (lex-this my-lexer (open-input-string prog))])
-;      (let ((parser-res (gram-parser lex))) (interpret-cmd parser-res '()))
-;      )
-;    ))
+(define eval
+  (lambda (s)
+    (let* ([prog (s)]
+          [lex-this (lambda (lexer input) (lambda () (lexer input)))]
+          [lex (lex-this my-lexer (open-input-string prog))])
+      (let ((parser-res (gram-parser lex))) (interpret-cmd parser-res '()))
+      )
+    ))
 
 ;;;;;;;;;;;;;;;;;;;
 ;tests

@@ -5,7 +5,7 @@
 (require "interpreter.rkt")
 (require "primitive-library.rkt")
 (require "environment.rkt")
-(require 2htdp/batch-io) ;Is it ok to use this library?
+(require 2htdp/batch-io) 
 
 ; use this file as a glue for all parts
 
