@@ -1,1 +1,2 @@
-return pow(1.3, 3)
+a = pow(1.3, 3);
+return a

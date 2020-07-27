@@ -55,9 +55,6 @@
         [(eq? (caaddr unitcom) 'func)
          (let ((func-def (caddr unitcom)))
            (begin 
-           ;(display "func definition:  ")
-           ;(display func-def)
-           ;(display "\n")
            (add-thunk-to-env var func-def env)))]
         
         [(eq? (caaddr unitcom) 'func_call)
@@ -115,7 +112,7 @@
     (cond
       [(and (list? val1) (list? val2))
        (if (xor (null? val1) (null? val2))
-           #f ;(error "ERROR: For comparison, lists must be of same size.")
+           #f
            (if (null? val1)
                #t
                (if (is-equal (car val1) (car val2))
@@ -141,7 +138,6 @@
   
 
 
-; returns #t or #f (I don't think so)
 ; op is +, -, *, /
 ; we may need to break this function into pieces, idk
 (define binary-operation
@@ -279,11 +275,9 @@
       ((eq? (car exp) 'string) (cadr exp))  
       ((eq? (car exp) 'list) (if (eq? (caadr exp) 'empty)
                                  '()
-                                 ;(display (value-of-exp (list 'list (cdadr exp))))
                                  (cons (value-of-exp (caadr exp) env)
                                        (value-of-exp (list 'list (cdadr exp)) env))
                                  ))
-      ; check listmem
       )))
 
 
@@ -315,6 +309,7 @@
       ((eq? (car exp) '!=) (not (is-equal (value-of-aexp (cadr exp) env) (value-of-aexp (caddr exp) env))))
       (else (value-of-aexp exp env)))))
 
+;Returns the value of given thunk
 (define value-of-thunk
   (lambda (var thunk)
     (if (thunk? thunk)
@@ -341,7 +336,7 @@
                val))]
           )
         
-        ;if there is no thunk, just return the value
+        ;if there is no thunk, just return the value of expression
         (value-of-exp thunk '()))))
 
 ;thunk: ('thunk exp env)
@@ -398,14 +393,3 @@
             (error "ERROR: Invalid number of arguments.")
             ))
       ))))
-;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
-
-
-
-;(interpret-cmd '((return (false)) (return (true))) '())
-;(interpret-cmd '((while (mult (num 10) (list ((num 34) NULL empty))) ((return (true))))) '())
-;(interpret-cmd '((if (num 10) ((return (true))) ((return (false))))) '())
-;(interpret-cmd '((return (list ((num 19) null false (list ((num 10) empty)) empty)))) '())
-;(interpret-cmd '((if (> (num 10) (num 4)) ((return (list ((* (num 2) (num 3)) (- (num 7) (num 9)) empty)))) ((return (/ (num 8) (num 10)))))) '())
-
-(define (i a) (interpret-cmd a '()))

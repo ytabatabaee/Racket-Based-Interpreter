@@ -151,29 +151,3 @@
 (define-tokens a (NUM VAR STR))
 (define-empty-tokens b (EOF plus minus mult div greater less equal notequal assign Lpar Rpar Lbr Rbr Lcbr Rcbr TRUE FALSE NULL if then else endif while do end return comma semicolon func)) ;?? NULL??
 
-
-;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
-
-(define test1  "1+2+ 3 +   4
-if a == 2.011 * 6 then
-    b = \"Salam, chetori?! 1234 \"
-endif")
-
-(define test2 "while 10 * [34 null] then do return return true end")
-(define test3 "return [\"blue sky\", 1] + \"a\" #x ")
-(define test4 "f = func(a, b) {return  a - b}; temp = f(2, 4)")
-
-;(my-lexer (open-input-string test2))
-
-;(define lex-this (lambda (lexer input) (lambda () (lexer input))))
-;(define lex (lex-this my-lexer (open-input-string test4)))
-;(lex)
-;(lex)
-;(lex)
-;(lex)
-;(lex)
-;(lex)
-;(lex)
-;(lex)
-;(lex)
-;(lex)
