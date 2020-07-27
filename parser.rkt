@@ -86,35 +86,3 @@
           ((exp comma args) (cons $1 $3)))
     ))
    )
-
-;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
-
-(define test1 "while 10 do return true end")
-(define test2 "while 10 * [1, 3 , 2 , true, []] do return true end")
-(define test3 "return false; return true")
-(define test4 "if 10 then return true else return false endif")
-(define test5 "return [19, 29]")
-(define test6 "x = 5 > 6")
-(define test7 "if 10 > 4 then return [2*3, 7-9] else return 8/10 endif")
-(define test8 "x= [[1, 2], [2, 3]]; return x[1][1]")
-(define test9 "x = 5; y= [1, 2, 3, [4, 5]]; return false + [x>10, x<20, x!=y[3][1]]")
-(define test10 "return [\"b\", 1] + \"a\"")
-(define test11 "f = func(a, b) {return  a - b}; temp = f(2, 4); return temp")
-(define test12 "f = func(a, b) {return  a - b}")
-(define test13 "a= 3; b=4; return a-b")
-(define test14 "return [1, 2, 3]")
-(define test15 "a=2; f=func(b){return a}; a=3; b=f(2); return b")
-(define test16 "f=func(b) {return a}; a=3; b=f(2); return b ")
-(define test17 "f = func(b) {a = 3; return a}; b = f(2); return b")
-(define test18 "listmaker = func(a, b) {
-if a == 0 then return [] else a = listmaker(a-1, b); return a + [b] endif
-};
-b = listmaker(3, 5);
-return b")
-
-(define test19 "fact = func(n) {if n==1 then return 1 else temp = fact(n-1); return n * temp endif}; t = fact(5); return t")
-
-
-;(define lex-this (lambda (lexer input) (lambda () (lexer input))))
-;(define lex (lex-this my-lexer (open-input-string test19)))
-;(let ((parser-res (gram-parser lex))) parser-res)

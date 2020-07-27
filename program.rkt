@@ -24,7 +24,6 @@
       )))
             
        
-; todo complete this
 (define evaluate
   (lambda (filename)
     (let* ([prog (read-file filename)]
