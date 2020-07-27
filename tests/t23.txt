@@ -1,0 +1,9 @@
+f = func(b) {
+c = 3;
+res = eval("a = 3;
+if a > 2 then a = c + 1 else a = 5 endif;
+return a");
+return res
+}; 
+a = f(2);
+return a
