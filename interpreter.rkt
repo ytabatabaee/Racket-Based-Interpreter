@@ -320,28 +320,21 @@
            (let ((func-def (cadr thunk))
                  (saved-env (caddr thunk)))
              (let ((function (define_function var func-def saved-env)))
-               (begin
-                 ;(update-env var function env)
-                 function)))]
+               function))]
 
           ;if thunk is function call
           [(eqv? (caadr thunk) 'func_call)
            (let ((args (cadr thunk))
                  (saved-env (caddr thunk)))
              (let ((function-val (call_function args saved-env)))
-               (begin
-                 ;(update-env var function-val env)
-                 ;(display args)
-                 function-val)))]
+               function-val))]
 
           ;if thunk is exp
           [else
            (let ((exp (cadr thunk))
                  (saved-env (caddr thunk)))
              (let ((val (value-of-exp exp saved-env)))
-               (begin
-                 ;(update-env var val env)
-                 val)))]
+               val))]
           )
         
         ;if there is no thunk, just return the value
@@ -387,11 +380,11 @@
       (lambda (arguments)
         (if (eq? (length (cdadr arguments)) (- (length f_args) 1))
             (begin
-            (set! env (update-env f_name (define_function f_name definition env) env))
-            (for/list ([i (build-list (length (cdadr arguments)) values)])
-              (set! env (update-env (list-ref f_args i)
-                                    (list-ref (cdadr arguments) i) env)))
-            (interpret-cmd f_body env))
+              (set! env (update-env f_name (define_function f_name definition env) env))
+              (for/list ([i (build-list (length (cdadr arguments)) values)])
+                (set! env (update-env (list-ref f_args i)
+                                      (list-ref (cdadr arguments) i) env)))
+              (interpret-cmd f_body env))
             (error "ERROR: Invalid number of arguments.")
             )
       ))))
