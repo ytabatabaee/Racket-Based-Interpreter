@@ -13,12 +13,12 @@
   (lambda (env)
     (begin
       (set! env (update-env 'pow pow env))
-      (set! env (update-env 'make-list make-list env))
+      (set! env (update-env 'makelist make-list env))
       (set! env (update-env 'reverse reverse env))
-      (set! env (update-env 'reverse-all reverse-all env))
+      (set! env (update-env 'reverseall reverse-all env))
       (set! env (update-env 'set set env))
       (set! env (update-env 'merge merge env))
-      (set! env (update-env 'merge-sort merge-sort env))
+      (set! env (update-env 'mergesort merge-sort env))
       (set! env (update-env 'eval eval env))
       env
       )))

@@ -1,1 +1,1 @@
-return reverseـall([1, [2, 3], [4, [5, 6]]])
+return reverseall([1, [2, 3], [4, [5, 6]]])
