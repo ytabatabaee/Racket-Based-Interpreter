@@ -4,4 +4,5 @@ if (a[2][1][0] < 9) * (a[2][1][0] > 7) then
 	b = b + 1
 else
 	b = b + 2
-endif
+endif;
+return b
