@@ -367,9 +367,12 @@
 (define call_function
   (lambda (arguments env)
     (let* ([f_name (cadr arguments)]
-           [f_args (make-thunk (cons 'list (cddr arguments)) env)])
-          ((value-of-thunk f_name (apply-env f_name env)) f_args))
-    ))
+           [func (apply-env f_name env)])
+      (if (procedure? func)
+          (let* ([f_args (value-of-exp (cons 'list (cddr arguments)) env)])
+            (func f_args))
+          (let* ([f_args (make-thunk (cons 'list (cddr arguments)) env)])
+            ((value-of-thunk f_name func) f_args))))))
 
 
 ;returns a function, given the definition
