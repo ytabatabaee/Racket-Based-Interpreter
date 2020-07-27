@@ -15,6 +15,7 @@
       (set! env (update-env 'pow pow env))
       (set! env (update-env 'make-list make-list env))
       (set! env (update-env 'reverse reverse env))
+      (set! env (update-env 'reverse-all reverse-all env))
       (set! env (update-env 'set set env))
       (set! env (update-env 'merge merge env))
       (set! env (update-env 'merge-sort merge-sort env))
