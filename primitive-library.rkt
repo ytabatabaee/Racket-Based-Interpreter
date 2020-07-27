@@ -135,10 +135,14 @@
      (let ([mid (ceiling (/ (length a) 2))])
        (merge-func (merge-sort-func (take a mid)) (merge-sort-func (drop a mid))))])))
 
-
 (define eval
+  (lambda (lst)
+    (let ((s (car lst)))
+       (eval-func s))))
+
+(define eval-func
   (lambda (s)
-    (let* ([prog (s)]
+    (let* ([prog s]
           [lex-this (lambda (lexer input) (lambda () (lexer input)))]
           [lex (lex-this my-lexer (open-input-string prog))])
       (let ((parser-res (gram-parser lex))) (interpret-cmd parser-res '()))
