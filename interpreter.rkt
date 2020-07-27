@@ -54,7 +54,11 @@
       (cond
         [(eq? (caaddr unitcom) 'func)
          (let ((func-def (caddr unitcom)))
-           (add-thunk-to-env var func-def env))]
+           (begin 
+           ;(display "func definition:  ")
+           ;(display func-def)
+           ;(display "\n")
+           (add-thunk-to-env var func-def env)))]
         
         [(eq? (caaddr unitcom) 'func_call)
          (let ((func-call (caddr unitcom)))
@@ -338,7 +342,7 @@
           )
         
         ;if there is no thunk, just return the value
-        thunk)))
+        (value-of-exp thunk '()))))
 
 ;thunk: ('thunk exp env)
 (define make-thunk
@@ -369,10 +373,12 @@
     (let* ([f_name (cadr arguments)]
            [func (apply-env f_name env)])
       (if (procedure? func)
+          (begin
           (let* ([f_args (value-of-exp (cons 'list (cddr arguments)) env)])
-            (func f_args))
+            (func f_args)))
+          (begin
           (let* ([f_args (make-thunk (cons 'list (cddr arguments)) env)])
-            ((value-of-thunk f_name func) f_args))))))
+            ((value-of-thunk f_name func) f_args)))))))
 
 
 ;returns a function, given the definition
@@ -381,18 +387,16 @@
     (let* ([f_args (cadr definition)]
            [f_body (caddr definition)])
       (lambda (arguments)
+        (begin
         (if (eq? (length (cadadr arguments)) (length f_args))
             (begin
-              ;(display arguments)
-              (set! env (update-env f_name (define_function f_name definition env) env))
-              (for/list ([i (build-list (- (length (cadadr arguments)) 1) values)])
-                (set! env (update-env (list-ref f_args i)
-                                      (list-ref (cadadr arguments) i) env)))
-              ;(display env)
+              (set! env (add-thunk-to-env f_name definition (caddr arguments)))
+                (for/list ([i (build-list (- (length (cadadr arguments)) 1) values)])
+                  (set! env (add-thunk-to-env (list-ref f_args i)
+                                              (list-ref (cadadr arguments) i) env)))
               (interpret-cmd f_body env))
             (error "ERROR: Invalid number of arguments.")
-            ;(display (cadadr arguments))
-            )
+            ))
       ))))
 ;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
 
