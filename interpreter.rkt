@@ -381,14 +381,17 @@
     (let* ([f_args (cadr definition)]
            [f_body (caddr definition)])
       (lambda (arguments)
-        (if (eq? (length (cdadr arguments)) (- (length f_args) 1))
+        (if (eq? (length (cadadr arguments)) (length f_args))
             (begin
+              ;(display arguments)
               (set! env (update-env f_name (define_function f_name definition env) env))
-              (for/list ([i (build-list (length (cdadr arguments)) values)])
+              (for/list ([i (build-list (- (length (cadadr arguments)) 1) values)])
                 (set! env (update-env (list-ref f_args i)
-                                      (list-ref (cdadr arguments) i) env)))
+                                      (list-ref (cadadr arguments) i) env)))
+              ;(display env)
               (interpret-cmd f_body env))
             (error "ERROR: Invalid number of arguments.")
+            ;(display (cadadr arguments))
             )
       ))))
 ;--------------------------------> TODO! REMOVE ALL STUFF BELOW!
