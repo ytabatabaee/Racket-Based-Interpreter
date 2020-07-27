@@ -8,10 +8,11 @@
 (provide pow)
 (provide make-list)
 (provide reverse)
+(provide reverse-all)
 (provide set)
 (provide merge)
 (provide merge-sort)
-;(provide eval)
+(provide eval)
 
 (define pow
   (lambda (lst)
