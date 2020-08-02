@@ -235,11 +235,10 @@
        [(list? cexp)
         (if (null? cexp)
             '()
-            (if (or (number? (car cexp)) (boolean? (car cexp)))
+            (if (or (number? (car cexp)) (boolean? (car cexp)) (list? (car cexp)))
                 (cons (negation (car cexp))
                       (negation (cdr cexp)))
-                (error 'negation "All list members must be of type number or boolean."))
-            )]
+                (error 'negation "All list members must be of type number or boolean.")))]
        [else (error 'negation "Operation - not allowed!")]
        )
     ))
