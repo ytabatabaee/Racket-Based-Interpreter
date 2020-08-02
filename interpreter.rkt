@@ -44,7 +44,10 @@
 (define interpret-whilecom
   (lambda (unitcom env)
     (if (value-of-exp (cadr unitcom) env)
-        (interpret-whilecom unitcom (interpret-cmd (caddr unitcom) env))
+        (let ((new-env (interpret-cmd (caddr unitcom) env)))
+          (if (and (list? env) (equal? (car env) '('is-env? #t)))
+              (interpret-whilecom unitcom new-env)
+              new-env))
         env)))
 
 
