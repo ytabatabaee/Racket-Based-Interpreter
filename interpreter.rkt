@@ -8,11 +8,11 @@
 ; returns updated env
 (define interpret-cmd
   (lambda (cmd env)
-    (if (and (list? env) (eq? (car env) 'end))
-        (cadr env)
+    (if (and (list? env) (equal? (car env) '('is-env? #t)))
         (if (null? cmd)
             env
-            (interpret-cmd (cdr cmd) (interpret-unitcom (car cmd) env))))))
+            (interpret-cmd (cdr cmd) (interpret-unitcom (car cmd) env)))
+    env)))
 
 
 
@@ -74,7 +74,7 @@
 ; returns value of return exp
 (define interpret-return
   (lambda (exp env)
-    (list 'end (value-of-exp (cadr exp) env))))
+    (value-of-exp (cadr exp) env)))
 
 
 

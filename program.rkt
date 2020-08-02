@@ -29,6 +29,6 @@
     (let* ([prog (read-file filename)]
           [lex-this (lambda (lexer input) (lambda () (lexer input)))]
           [lex (lex-this my-lexer (open-input-string prog))])
-      (let ((parser-res (gram-parser lex))) (interpret-cmd parser-res (add-library '())))
+      (let ((parser-res (gram-parser lex))) (interpret-cmd parser-res (add-library (cons '('is-env? #t) '()))))
       )
     ))
