@@ -382,7 +382,8 @@
             (func f_args)))
           (begin
           (let* ([f_args (make-thunk (cons 'list (cddr arguments)) env)])
-            ((value-of-thunk f_name func) f_args)))))))
+            (begin
+            ((value-of-thunk f_name func) f_args))))))))
 
 
 ;returns a function, given the definition
@@ -394,7 +395,7 @@
         (begin
         (if (eq? (length (cadadr arguments)) (length f_args))
             (begin
-              (set! env (add-thunk-to-env f_name definition (caddr arguments)))
+              (set! env (append env (add-thunk-to-env f_name definition (caddr arguments))))
                 (for/list ([i (build-list (- (length (cadadr arguments)) 1) values)])
                   (set! env (add-thunk-to-env (list-ref f_args i)
                                               (list-ref (cadadr arguments) i) env)))
