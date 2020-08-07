@@ -1,5 +1,3 @@
-# PL Project
+# Racket-Based Interpreter
 
-## Authors
-
-* Arezou Pakzad - Rozhin Nobahari - Yasamin Tabatabaee
+In this project we developed an interpreter in Racket as our Programming Languages course project.
